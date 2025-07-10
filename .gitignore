@@ -1,0 +1,20 @@
+# Simple .gitignore for a basic website
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Editor Files
+.vscode/
+*.swp
+*.swo
+
+# Temporary Files
+*.tmp
+*.bak
+
+# Log Files
+*.log
+
+# Environment Files (for later when you add them)
+.env
