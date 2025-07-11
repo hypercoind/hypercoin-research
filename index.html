@@ -6,35 +6,62 @@
     <title>Hypercoin Research</title>
     
     <style>
-        /* CSS - This controls how everything looks */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #222222;
+            --bg-hero: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --bitcoin-orange: #f7931a;
+            --bitcoin-orange-dark: #d4761a;
+            --bitcoin-orange-light: #ffb84d;
+            --accent-gold: #ffd700;
+            --border-color: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-hero: #f5f5f5;
+            --text-primary: #1a1a1a;
+            --text-secondary: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
         
-        /* Reset some default browser styling */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        /* Body styling - affects the entire page */
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: all 0.3s ease;
         }
         
-        /* Container to center content and limit width */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
         
-        /* Header styling */
         header {
-            background-color: #006b5f;
-            color: white;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border-bottom: 1px solid var(--border-color);
             padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
         
         .header-content {
@@ -45,113 +72,201 @@
         
         .logo {
             font-size: 1.8rem;
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--bitcoin-orange);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        /* Navigation styling */
+        .logo::before {
+            content: "₿";
+            font-size: 2rem;
+            color: var(--bitcoin-orange);
+        }
+        
         nav ul {
             list-style: none;
             display: flex;
             gap: 2rem;
+            align-items: center;
         }
         
         nav a {
-            color: white;
+            color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--bitcoin-orange);
+            transition: width 0.3s ease;
         }
         
         nav a:hover {
-            color: #009688;
+            color: var(--bitcoin-orange);
         }
         
-        /* Main content area */
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            border-color: var(--bitcoin-orange);
+            color: var(--bitcoin-orange);
+        }
+        
         main {
-            background-color: white;
+            background-color: var(--bg-primary);
             padding: 2rem 0;
             min-height: 500px;
         }
         
-        /* Hero section - the big intro area */
         .hero {
             text-align: center;
-            padding: 3rem 0;
-            background-color: #ecf0f1;
-            margin-bottom: 2rem;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--bg-hero), var(--bg-secondary));
+            margin-bottom: 3rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
         }
         
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
-            color: #006b5f;
+            color: var(--text-primary);
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--bitcoin-orange), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .hero p {
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            max-width: 600px;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
             margin: 0 auto;
+            font-weight: 400;
         }
         
-        /* Content sections */
         .content-section {
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
         
         .content-section h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #006b5f;
-            border-bottom: 2px solid #009688;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            border-bottom: 3px solid var(--bitcoin-orange);
             padding-bottom: 0.5rem;
+            position: relative;
         }
         
-        /* Simple grid for content cards */
+        .content-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-gold);
+        }
+        
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
             margin-top: 2rem;
         }
         
         .content-card {
-            background-color: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border-left: 4px solid #009688;
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--bitcoin-orange), var(--accent-gold));
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.15);
         }
         
         .content-card h3 {
-            color: #006b5f;
+            color: var(--bitcoin-orange);
             margin-bottom: 1rem;
+            font-size: 1.4rem;
+            font-weight: 600;
         }
         
-        /* Footer */
+        .content-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
         footer {
-            background-color: #006b5f;
-            color: white;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            color: var(--text-secondary);
             text-align: center;
             padding: 2rem 0;
-            margin-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
         }
         
-        /* Button styling */
         .btn {
             display: inline-block;
-            background-color: #009688;
+            background: linear-gradient(45deg, var(--bitcoin-orange), var(--bitcoin-orange-dark));
             color: white;
             padding: 0.75rem 1.5rem;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 6px;
             margin-top: 1rem;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
         }
         
         .btn:hover {
-            background-color: #00796b;
+            background: linear-gradient(45deg, var(--bitcoin-orange-dark), var(--bitcoin-orange));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
         }
         
-        /* Make it look good on phones */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -165,11 +280,19 @@
             }
             
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
             }
             
             .content-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .content-section h2 {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -187,6 +310,7 @@
                         <li><a href="#research">Research</a></li>
                         <li><a href="#about">About</a></li>
                         <li><a href="#contact">Contact</a></li>
+                        <li><button class="theme-toggle" id="theme-toggle">☀️ Light</button></li>
                     </ul>
                 </nav>
             </div>
@@ -240,21 +364,45 @@
 
     <!-- JavaScript - This makes the page interactive -->
     <script>
-        // Simple JavaScript to make the navigation work smoothly
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
         
-        // Get all navigation links
+        // Check for saved theme preference or default to dark mode
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.setAttribute('data-theme', 'light');
+            themeToggle.innerHTML = '🌙 Dark';
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '☀️ Light';
+        }
+        
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '☀️ Light';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '🌙 Dark';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Smooth Navigation
         const navLinks = document.querySelectorAll('nav a[href^="#"]');
         
-        // Add click event to each link
         navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
-                e.preventDefault(); // Stop the default jump behavior
+                e.preventDefault();
                 
-                // Get the target section
                 const targetId = this.getAttribute('href');
                 const targetSection = document.querySelector(targetId);
                 
-                // Smooth scroll to the section
                 if (targetSection) {
                     targetSection.scrollIntoView({
                         behavior: 'smooth',
@@ -264,19 +412,10 @@
             });
         });
         
-        // Simple function to show current time (just for learning JavaScript)
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            console.log('Current time:', timeString);
-        }
-        
-        // Call the function every minute
-        setInterval(updateTime, 60000);
-        
-        // Log a welcome message to the browser console
-        console.log('Welcome to Hypercoin Research! Check the console to see JavaScript in action.');
-        console.log('Try typing updateTime() in the console to see the current time.');
+        // Enhanced welcome message
+        console.log('🧡 Welcome to Hypercoin Research!');
+        console.log('🌙 Dark mode is default - toggle with the button in the header');
+        console.log('₿ Bitcoin-themed design with professional styling');
     </script>
 </body>
 </html>
