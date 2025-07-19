@@ -266,6 +266,24 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
         }
+
+        .btn-no-click {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--text-muted), var(--bitcoin-orange-dark));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
+        }
+
+        .btn-no-click:hover {
+            background: linear-gradient(45deg, var(--bitcoin-orange-dark), var(--border-color));
+            box-shadow: 0 4px 12px rgba(168, 114, 56, 0.4);
+        }
         
         @media (max-width: 768px) {
             .header-content {
@@ -303,7 +321,7 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">Hypercoin Research</div>
+                <div href="#home" class="logo">Hypercoin Research</div>
                 <nav>
                     <ul>
                         <li><a href="#home">Home</a></li>
@@ -327,22 +345,27 @@
 
         <div class="container">
             <section id="research" class="content-section">
-                <h2>Research Articles</h2>
+                <h2>Research</h2>
                 <div class="content-grid">
+                    <div class="content-card">
+                        <h3>Monte Carlo Simulator</h3>
+                        <p>Interactive Bitcoin price projection tool using Monte Carlo methods with multiple scenarios and statistical analysis.</p>
+                        <a href="bitcoin-monte-carlo/bitcoin-price-simulation.html" class="btn">Launch Simulator</a>
+                    </div>
                     <div class="content-card">
                         <h3>On-Chain Analysis</h3>
                         <p>Comprehensive analysis of Bitcoin blockchain data, network metrics, and on-chain indicators that reveal market structure and participant behavior.</p>
-                        <a href="#" class="btn">Read Analysis</a>
+                        <a class="btn-no-click">Coming Soon!</a>
                     </div>
                     <div class="content-card">
                         <h3>Macroeconomic Context</h3>
                         <p>Examining Bitcoin's relationship with traditional markets, monetary policy, inflation, and global economic trends.</p>
-                        <a href="#" class="btn">Read Analysis</a>
+                        <a class="btn-no-click">Coming Soon!</a>
                     </div>
                     <div class="content-card">
                         <h3>Market Structure</h3>
                         <p>Research on Bitcoin adoption patterns, institutional flows, and long-term market cycles using quantitative analysis.</p>
-                        <a href="#" class="btn">Read Analysis</a>
+                        <a class="btn-no-click">Coming Soon!</a>
                     </div>
                 </div>
             </section>

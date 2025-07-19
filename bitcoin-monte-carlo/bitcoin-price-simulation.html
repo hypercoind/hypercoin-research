@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Monte Carlo Simulator - Hypercoin Research</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #222222;
+            --bg-hero: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --bitcoin-orange: #f7931a;
+            --bitcoin-orange-dark: #d4761a;
+            --bitcoin-orange-light: #ffb84d;
+            --accent-gold: #ffd700;
+            --border-color: #333333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-hero: #f5f5f5;
+            --text-primary: #1a1a1a;
+            --text-secondary: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: all 0.3s ease;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--bitcoin-orange);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo::before {
+            content: "₿";
+            font-size: 2rem;
+            color: var(--bitcoin-orange);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            border-color: var(--bitcoin-orange);
+            color: var(--bitcoin-orange);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--bg-hero), var(--bg-secondary));
+            margin-bottom: 3rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--bitcoin-orange), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        select, input {
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--bitcoin-orange);
+            box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+        }
+        
+        .run-simulation-btn {
+            background: linear-gradient(45deg, var(--bitcoin-orange), var(--bitcoin-orange-dark));
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
+        }
+        
+        .run-simulation-btn:hover {
+            background: linear-gradient(45deg, var(--bitcoin-orange-dark), var(--bitcoin-orange));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
+        }
+        .chart-container {
+            position: relative;
+            height: 500px;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--bitcoin-orange), var(--accent-gold));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.15);
+        }
+        
+        .stat-card h3 {
+            color: var(--bitcoin-orange);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            color: var(--bitcoin-orange);
+            font-weight: 600;
+        }
+        
+        .probability-table {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .probability-table h3 {
+            color: var(--bitcoin-orange);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            color: var(--bitcoin-orange);
+            font-weight: 600;
+            background: rgba(247, 147, 26, 0.1);
+        }
+        
+        .milestone {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .prob-high {
+            color: #00ff88;
+            font-weight: 600;
+        }
+        
+        .prob-medium {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+        
+        .prob-low {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                width: 100%;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .chart-container {
+                padding: 20px;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html" class="logo">Hypercoin Research</a>
+                <button class="theme-toggle" id="theme-toggle">☀️ Light</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1>Bitcoin Monte Carlo Simulator</h1>
+                <p>Probabilistic modeling of Bitcoin price trajectories using advanced statistical methods</p>
+            </section>
+
+            <div class="controls">
+            <div class="control-group">
+                <label>Current Price ($)</label>
+                <input type="number" id="currentPrice" value="115000" min="1000" step="1000">
+            </div>
+            <div class="control-group">
+                <label>Annual Volatility (%)</label>
+                <input type="number" id="volatility" value="42" min="10" max="200" step="5">
+            </div>
+            <div class="control-group">
+                <label>Scenario</label>
+                <select id="scenario">
+                    <option value="0.15">Conservative (21% annual)</option>
+                    <option value="0.25">Moderate (33% annual)</option>
+                    <option value="0.40" selected>Optimistic (42% annual)</option>
+                    <option value="0.60">Maximalist (60% annual)</option>
+                    <option value="-0.05">Bearish (-5% annual)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Simulations</label>
+                <select id="numSims">
+                    <option value="1000">1,000</option>
+                    <option value="5000" selected>5,000</option>
+                    <option value="10000">10,000</option>
+                </select>
+            </div>
+            <button class="run-simulation-btn" onclick="runSimulation()">Run Simulation</button>
+        </div>
+        
+        <div id="loading" class="loading" style="display: none;">Running simulation...</div>
+        
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+        </div>
+        
+        <div class="stats-grid" id="statsGrid"></div>
+        
+        <div class="probability-table">
+            <h3>Probability of Reaching Price Milestones</h3>
+            <table id="probabilityTable">
+                <thead>
+                    <tr>
+                        <th>Milestone</th>
+                        <th>5 Years</th>
+                        <th>10 Years</th>
+                        <th>15 Years</th>
+                        <th>20 Years</th>
+                    </tr>
+                </thead>
+                <tbody id="probabilityBody"></tbody>
+            </table>
+        </div>
+        </div>
+    </main>
+
+    <script>
+        let chart = null;
+        
+        // Box-Muller transform for normal distribution
+        function randomNormal() {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+        
+        // Simulate one price path
+        function simulatePricePath(startPrice, years, annualReturn, volatility) {
+            const dt = 1/252; // Daily time steps
+            const numSteps = Math.floor(years * 252);
+            let price = startPrice;
+            
+            for (let i = 0; i < numSteps; i++) {
+                const drift = (annualReturn - 0.5 * volatility * volatility) * dt;
+                const diffusion = volatility * Math.sqrt(dt) * randomNormal();
+                price = price * Math.exp(drift + diffusion);
+            }
+            
+            return price;
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            if (price >= 1000000) {
+                return `$${(price / 1000000).toFixed(2)}M`;
+            } else if (price >= 1000) {
+                return `$${Math.round(price / 1000).toLocaleString()}K`;
+            } else {
+                return `$${Math.round(price).toLocaleString()}`;
+            }
+        }
+        
+        // Calculate statistics
+        function calculateStats(prices) {
+            prices.sort((a, b) => a - b);
+            const n = prices.length;
+            
+            return {
+                median: prices[Math.floor(n * 0.5)],
+                percentile_10: prices[Math.floor(n * 0.1)],
+                percentile_25: prices[Math.floor(n * 0.25)],
+                percentile_75: prices[Math.floor(n * 0.75)],
+                percentile_90: prices[Math.floor(n * 0.9)],
+                mean: prices.reduce((a, b) => a + b) / n,
+                min: prices[0],
+                max: prices[n - 1]
+            };
+        }
+        
+        // Run the simulation
+        async function runSimulation() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            // Get parameters
+            const currentPrice = parseFloat(document.getElementById('currentPrice').value);
+            const volatility = parseFloat(document.getElementById('volatility').value) / 100;
+            const annualReturn = parseFloat(document.getElementById('scenario').value);
+            const numSims = parseInt(document.getElementById('numSims').value);
+            
+            // Time horizons
+            const timeHorizons = [4, 5, 6, 8, 10, 12, 15];
+            
+            // Allow UI to update
+            await new Promise(resolve => setTimeout(resolve, 10));
+            
+            // Run simulations
+            const results = {};
+            const percentiles = {};
+            
+            for (const years of timeHorizons) {
+                const prices = [];
+                
+                for (let i = 0; i < numSims; i++) {
+                    prices.push(simulatePricePath(currentPrice, years, annualReturn, volatility));
+                }
+                
+                results[years] = calculateStats(prices);
+                
+                // Store percentiles for chart
+                percentiles[years] = {
+                    p10: results[years].percentile_10,
+                    p25: results[years].percentile_25,
+                    p50: results[years].median,
+                    p75: results[years].percentile_75,
+                    p90: results[years].percentile_90
+                };
+            }
+            
+            // Update chart
+            updateChart(timeHorizons, percentiles, currentPrice);
+            
+            // Update statistics
+            updateStats(results);
+            
+            // Calculate probabilities
+            const milestones = [100000, 250000, 500000, 1000000, 2000000, 5000000, 10000000, 15000000, 20000000];
+            const probabilities = {};
+            
+            for (const milestone of milestones) {
+                if (milestone < currentPrice) continue;
+                
+                probabilities[milestone] = {};
+                
+                for (const years of [5, 10, 15, 20]) {
+                    let count = 0;
+                    for (let i = 0; i < 1000; i++) {
+                        if (simulatePricePath(currentPrice, years, annualReturn, volatility) >= milestone) {
+                            count++;
+                        }
+                    }
+                    probabilities[milestone][years] = (count / 10);
+                }
+            }
+            
+            updateProbabilityTable(probabilities);
+            
+            loading.style.display = 'none';
+        }
+        
+        // Update chart
+        function updateChart(years, percentiles, currentPrice) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            const datasets = [
+                {
+                    label: '90th Percentile',
+                    data: years.map(y => percentiles[y].p90),
+                    borderColor: '#00ff00',
+                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: '75th Percentile',
+                    data: years.map(y => percentiles[y].p75),
+                    borderColor: '#88ff88',
+                    backgroundColor: 'rgba(136, 255, 136, 0.1)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Median (50th)',
+                    data: years.map(y => percentiles[y].p50),
+                    borderColor: '#f7931a',
+                    backgroundColor: 'rgba(247, 147, 26, 0.1)',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: '25th Percentile',
+                    data: years.map(y => percentiles[y].p25),
+                    borderColor: '#ff8888',
+                    backgroundColor: 'rgba(255, 136, 136, 0.1)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: '10th Percentile',
+                    data: years.map(y => percentiles[y].p10),
+                    borderColor: '#ff0000',
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                    fill: false,
+                    tension: 0.1
+                }
+            ];
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years.map(y => `${y} Years`),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Bitcoin Price Projections - Percentile Ranges',
+                            color: '#f7931a',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatPrice(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'logarithmic',
+                            ticks: {
+                                color: '#e0e0e0',
+                                callback: function(value) {
+                                    return formatPrice(value);
+                                }
+                            },
+                            grid: {
+                                color: '#333'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Price (USD)',
+                                color: '#e0e0e0'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#e0e0e0'
+                            },
+                            grid: {
+                                color: '#333'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Time Horizon',
+                                color: '#e0e0e0'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            });
+        }
+        
+        // Update statistics
+        function updateStats(results) {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = '';
+            
+            const selectedYears = [5, 10, 15];
+            
+            for (const years of selectedYears) {
+                const stats = results[years];
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                
+                card.innerHTML = `
+                    <h3>${years} Year Projection</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Median</span>
+                        <span class="stat-value">${formatPrice(stats.median)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Mean</span>
+                        <span class="stat-value">${formatPrice(stats.mean)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">10th - 90th Percentile</span>
+                        <span class="stat-value">${formatPrice(stats.percentile_10)} - ${formatPrice(stats.percentile_90)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">25th - 75th Percentile</span>
+                        <span class="stat-value">${formatPrice(stats.percentile_25)} - ${formatPrice(stats.percentile_75)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Min - Max</span>
+                        <span class="stat-value">${formatPrice(stats.min)} - ${formatPrice(stats.max)}</span>
+                    </div>
+                `;
+                
+                statsGrid.appendChild(card);
+            }
+        }
+        
+        // Update probability table
+        function updateProbabilityTable(probabilities) {
+            const tbody = document.getElementById('probabilityBody');
+            tbody.innerHTML = '';
+            
+            for (const [milestone, probs] of Object.entries(probabilities)) {
+                const row = document.createElement('tr');
+                
+                const getColorClass = (prob) => {
+                    if (prob >= 70) return 'prob-high';
+                    if (prob >= 30) return 'prob-medium';
+                    return 'prob-low';
+                };
+                
+                row.innerHTML = `
+                    <td class="milestone">${formatPrice(parseFloat(milestone))}</td>
+                    <td class="${getColorClass(probs[5])}">${probs[5].toFixed(1)}%</td>
+                    <td class="${getColorClass(probs[10])}">${probs[10].toFixed(1)}%</td>
+                    <td class="${getColorClass(probs[15])}">${probs[15].toFixed(1)}%</td>
+                    <td class="${getColorClass(probs[20])}">${probs[20].toFixed(1)}%</td>
+                `;
+                
+                tbody.appendChild(row);
+            }
+        }
+        
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to dark mode
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.setAttribute('data-theme', 'light');
+            themeToggle.innerHTML = '🌙 Dark';
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '☀️ Light';
+        }
+        
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '☀️ Light';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '🌙 Dark';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Run initial simulation
+        window.onload = function() {
+            runSimulation();
+        };
+    </script>
+</body>
+</html>
