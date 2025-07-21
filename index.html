@@ -76,6 +76,7 @@
             color: var(--bitcoin-orange);
             text-decoration: none;
             display: flex;
+            cursor: pointer;
             align-items: center;
             gap: 0.5rem;
         }
@@ -84,6 +85,14 @@
             content: "₿";
             font-size: 2rem;
             color: var(--bitcoin-orange);
+        }
+
+        .logo:hover {
+            color: var(--bitcoin-orange);
+        }
+        
+        .logo:hover::after {
+            width: 100%;
         }
         
         nav ul {
@@ -144,7 +153,7 @@
         
         .hero {
             text-align: center;
-            padding: 4rem 0;
+            padding: 1rem 0;
             background: linear-gradient(135deg, var(--bg-hero), var(--bg-secondary));
             margin-bottom: 3rem;
             border-radius: 12px;
@@ -269,6 +278,7 @@
 
         .btn-no-click {
             display: inline-block;
+            cursor: default;
             background: linear-gradient(45deg, var(--text-muted), var(--bitcoin-orange-dark));
             color: white;
             padding: 0.75rem 1.5rem;
@@ -336,7 +346,7 @@
     </header>
 
     <main>
-        <section class="hero">
+        <section id="home" class="hero">
             <div class="container">
                 <h1>Independent Bitcoin Research</h1>
                 <p>Data-driven analysis and commentary on Bitcoin, macroeconomics, and the evolution of money.</p>
@@ -372,9 +382,9 @@
 
             <section id="about" class="content-section">
                 <h2>About</h2>
-                <p>Independent research on Bitcoin and macroeconomics. All analysis is data-driven, transparent, and aims to provide clear insights into the evolving monetary landscape.</p>
-                
-                <p>This research is published openly to contribute to the broader understanding of Bitcoin's role in the global economy.</p>
+                <p>Independent research on Bitcoin and macroeconomics. 
+                    All analysis is data-driven, transparent, and aims to provide clear insights into the evolving monetary landscape.</p>
+                <p><br>This research is published openly to contribute to the broader understanding of Bitcoin's role in the global economy.</p>
             </section>
         </div>
     </main>
@@ -417,7 +427,7 @@
         });
         
         // Smooth Navigation
-        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+        const navLinks = document.querySelectorAll('nav a[href^="#"], .logo[href^="#"]');
         
         navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
@@ -426,6 +436,13 @@
                 const targetId = this.getAttribute('href');
                 const targetSection = document.querySelector(targetId);
                 
+                if (targetId === '#home') {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    return;
+                }
                 if (targetSection) {
                     targetSection.scrollIntoView({
                         behavior: 'smooth',
