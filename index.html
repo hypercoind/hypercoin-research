@@ -218,6 +218,10 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: max-content;
         }
         
         .content-card::before {
@@ -334,10 +338,6 @@
                 <div href="#home" class="logo">Hypercoin Research</div>
                 <nav>
                     <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#research">Research</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
                         <li><button class="theme-toggle" id="theme-toggle">☀️ Light</button></li>
                     </ul>
                 </nav>
@@ -391,6 +391,7 @@
 
     <footer>
         <div class="container">
+            <p>Follow us on <a href="https://twitter.com/hypercoind" target="_blank">Twitter</a> for updates.</p>
             <p>&copy; 2025 Hypercoin Research. Open source research for the Bitcoin community.</p>
         </div>
     </footer>
