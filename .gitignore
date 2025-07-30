@@ -18,3 +18,8 @@ Thumbs.db
 
 # Environment Files (for later when you add them)
 .env
+
+# Example Files
+example-article.html
+markdown-example.html
+articles/sample-article.md
