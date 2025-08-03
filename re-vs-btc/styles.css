@@ -1,0 +1,769 @@
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-card: #222222;
+    --bg-hero: #111111;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #888888;
+    --bitcoin-orange: #f7931a;
+    --bitcoin-orange-dark: #d4761a;
+    --bitcoin-orange-light: #ffb84d;
+    --accent-gold: #ffd700;
+    --border-color: #333333;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, var(--bg-hero), var(--bg-secondary));
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--bitcoin-orange), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+header p {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.input-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.common-inputs {
+    grid-column: 1 / -1;
+}
+
+.real-estate-inputs,
+.portfolio-inputs,
+.rent-inputs,
+.common-inputs {
+    background-color: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.real-estate-inputs::before,
+.portfolio-inputs::before,
+.rent-inputs::before,
+.common-inputs::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bitcoin-orange), var(--accent-gold));
+}
+
+.real-estate-inputs h2,
+.portfolio-inputs h2,
+.rent-inputs h2,
+.common-inputs h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--bitcoin-orange);
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.real-estate-inputs h2::after,
+.portfolio-inputs h2::after,
+.rent-inputs h2::after,
+.common-inputs h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent-gold);
+}
+
+.allocation-inputs h3 {
+    color: var(--bitcoin-orange);
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-primary);
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--bitcoin-orange);
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2);
+    background-color: var(--bg-secondary);
+}
+
+.help-section {
+    background-color: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.help-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bitcoin-orange), var(--accent-gold));
+}
+
+.help-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--bitcoin-orange);
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.help-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent-gold);
+}
+
+.help-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.overview-card,
+.scenarios-card,
+.instructions-card,
+.assumptions-card,
+.disclaimer-card {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.overview-card:hover,
+.scenarios-card:hover,
+.instructions-card:hover,
+.assumptions-card:hover,
+.disclaimer-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.15);
+}
+
+.overview-card h3,
+.scenarios-card h3,
+.instructions-card h3,
+.assumptions-card h3,
+.disclaimer-card h3 {
+    color: var(--bitcoin-orange);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.overview-card ul,
+.disclaimer-card ul {
+    margin-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.overview-card li,
+.disclaimer-card li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.scenario {
+    background-color: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--bitcoin-orange);
+    margin-bottom: 1.5rem;
+}
+
+.scenario:last-child {
+    margin-bottom: 0;
+}
+
+.scenario h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.scenario p {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.instructions-card ol {
+    margin-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.instructions-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.assumption-item {
+    background-color: var(--bg-primary);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.disclaimer-card {
+    background-color: var(--bg-primary);
+    border-left: 4px solid var(--accent-gold);
+}
+
+.disclaimer-card h3 {
+    color: var(--accent-gold);
+}
+
+.disclaimer-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.controls {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.controls button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+#calculate-btn {
+    background: linear-gradient(45deg, var(--bitcoin-orange), var(--bitcoin-orange-dark));
+    color: white;
+    box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
+}
+
+#calculate-btn:hover {
+    background: linear-gradient(45deg, var(--bitcoin-orange-dark), var(--bitcoin-orange));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
+}
+
+#reset-btn {
+    background: none;
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+#reset-btn:hover {
+    border-color: var(--bitcoin-orange);
+    color: var(--bitcoin-orange);
+    transform: translateY(-2px);
+}
+
+.results-section {
+    background-color: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin-bottom: 3rem;
+}
+
+.results-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--bitcoin-orange);
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.results-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent-gold);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background-color: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bitcoin-orange), var(--accent-gold));
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(247, 147, 26, 0.15);
+}
+
+.result-card h3 {
+    color: var(--bitcoin-orange);
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.result-item .label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.result-item .value {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+
+
+.comparison-summary {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.comparison-summary h3 {
+    color: var(--bitcoin-orange);
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.winner {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.difference, .savings-summary {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    font-weight: 400;
+}
+
+.chart-container {
+    margin-top: 2rem;
+    text-align: center;
+    background-color: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+#comparison-chart {
+    max-width: 100%;
+    height: auto;
+}
+
+.chart-container canvas {
+    color: var(--text-primary) !important;
+}
+
+.chart-container {
+    --chart-text-color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem 15px;
+    }
+    
+    .input-section {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    header {
+        padding: 1.5rem;
+    }
+    
+    header h1 {
+        font-size: 2.5rem;
+    }
+    
+    header p {
+        font-size: 1.1rem;
+    }
+    
+    .controls button {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .real-estate-inputs,
+    .portfolio-inputs,
+    .rent-inputs,
+    .common-inputs,
+    .results-section {
+        padding: 1.5rem;
+    }
+    
+    .result-card {
+        padding: 1.5rem;
+    }
+    
+    .results-section h2 {
+        font-size: 1.8rem;
+    }
+    
+    .help-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .help-section h2 {
+        font-size: 1.8rem;
+    }
+    
+    .overview-card,
+    .scenarios-card,
+    .instructions-card,
+    .assumptions-card,
+    .disclaimer-card {
+        padding: 1rem;
+    }
+    
+    .scenario {
+        padding: 1rem;
+    }
+    
+    .assumptions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation Keyframes - Smooth linear easing */
+@keyframes slideInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes countUp {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Animation Classes - Smoother timing */
+.animate-card {
+    animation: slideInUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-fade-in {
+    animation: fadeInScale 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-value {
+    animation: countUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.loading-shimmer {
+    background: linear-gradient(90deg, 
+        var(--bg-card) 25%, 
+        var(--bg-secondary) 50%, 
+        var(--bg-card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.calculating {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.calculating .btn {
+    animation: pulse 1s infinite;
+}
+
+/* Chart Animation */
+.chart-container {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease-out;
+}
+
+.chart-container.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered Animation Delays */
+.result-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.result-card:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.result-card:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+.comparison-summary {
+    animation-delay: 0.7s;
+}
+
+/* Animation states - Smoother transitions */
+.result-card {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.comparison-summary {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.chart-container {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Hide elements initially when starting animation */
+.results-section.animating .result-card:not(.animate-card) {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.results-section.animating .comparison-summary:not(.animate-fade-in) {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.results-section.animating .chart-container:not(.animate-in) {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@media print {
+    :root {
+        --bg-primary: white;
+        --bg-secondary: #f8f9fa;
+        --bg-card: white;
+        --bg-hero: #f5f5f5;
+        --text-primary: #1a1a1a;
+        --text-secondary: #333333;
+        --text-muted: #666666;
+        --border-color: #e0e0e0;
+        --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .controls {
+        display: none;
+    }
+    
+    .container {
+        max-width: none;
+        padding: 0;
+    }
+    
+    .input-section,
+    .results-section,
+    header {
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+}

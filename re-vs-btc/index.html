@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate vs Portfolio Investment Comparison</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Real Estate or BTC?</h1>
+            <p>Compare real estate investments with volatility-matched Bitcoin portfolios using US median market data</p>
+        </header>
+
+        <div class="help-section">
+            <h2>📚 How to Use This Calculator</h2>
+            
+            <div class="help-content">
+                <div class="overview-card">
+                    <h3>🎯 Tool Purpose</h3>
+                    <p>This calculator helps you compare three common wealth-building strategies:</p>
+                    <ul>
+                        <li><strong>Real Estate Investment:</strong> Buying property with a mortgage and building equity over time</li>
+                        <li><strong>Portfolio Investment:</strong> Investing a lump sum across diversified assets (Bitcoin, stocks, bonds, savings)</li>
+                        <li><strong>Bitcoin Savings Strategy:</strong> Using monthly rent vs. mortgage savings to dollar-cost average into Bitcoin</li>
+                    </ul>
+                </div>
+
+                <div class="scenarios-card">
+                    <h3>🤔 Common Decision Scenarios</h3>
+                    
+                    <div class="scenario">
+                        <h4>Scenario 1: "Should I save for a down payment or invest in Bitcoin?"</h4>
+                        <p><strong>How to use:</strong> Set the property price to your target home, adjust the down payment to your savings goal, and compare the real estate investment with the Bitcoin savings strategy results.</p>
+                        <p><strong>Key insight:</strong> See whether renting and investing your would-be mortgage payments in Bitcoin outperforms buying property.</p>
+                    </div>
+
+                    <div class="scenario">
+                        <h4>Scenario 2: "I have $100K. Should I put it toward a house or invest it?"</h4>
+                        <p><strong>How to use:</strong> Set your available cash as both the down payment and initial portfolio investment. Compare real estate returns with the diversified portfolio results.</p>
+                        <p><strong>Key insight:</strong> Compare the leveraged real estate investment against a balanced portfolio approach.</p>
+                    </div>
+
+                    <div class="scenario">
+                        <h4>Scenario 3: "I'm renting and have extra cash flow. What should I do with it?"</h4>
+                        <p><strong>How to use:</strong> Enter your actual monthly rent in the "Current Rent & Savings" section. The calculator will compute your monthly savings by renting vs. buying and show how investing those savings in Bitcoin could compound over time.</p>
+                        <p><strong>Key insight:</strong> Discover whether your rent savings, when invested consistently, could outpace property ownership returns based on your real rent costs.</p>
+                    </div>
+                </div>
+
+                <div class="instructions-card">
+                    <h3>⚙️ Usage Instructions</h3>
+                    <ol>
+                        <li><strong>Real Estate Inputs:</strong> Enter property details, mortgage terms, and ownership costs. Defaults are set to US median values.</li>
+                        <li><strong>Portfolio Inputs:</strong> Set your available investment capital and adjust asset allocation percentages (must total 100%).</li>
+                        <li><strong>Current Rent & Savings:</strong> Enter your actual monthly rent and expected annual rent increases. These determine your monthly savings available for Bitcoin investment.</li>
+                        <li><strong>Time Horizon:</strong> Choose your investment timeframe (typically 5-20 years).</li>
+                        <li><strong>Calculate:</strong> Click "Calculate & Compare" to see detailed results and projections.</li>
+                        <li><strong>Analyze:</strong> Review the comparison summary and chart to understand which strategy performs best for your situation.</li>
+                    </ol>
+                </div>
+
+                <div class="assumptions-card">
+                    <h3>📊 Key Assumptions & Methodology</h3>
+                    <div class="assumptions-grid">
+                        <div class="assumption-item">
+                            <strong>Property Appreciation:</strong> 4% annually (US historical average)
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Rent Inflation:</strong> User configurable (default 3.5% annually)
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Bitcoin Growth:</strong> Modeled with decreasing volatility over time as the market matures
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Portfolio Returns:</strong> Based on historical asset class performance
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Tax Considerations:</strong> Not included - consult a tax professional for your specific situation
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Monthly Savings:</strong> Calculated as the difference between mortgage payments (PITI+PMI+HOA) and your actual rent input
+                        </div>
+                    </div>
+                </div>
+
+                <div class="disclaimer-card">
+                    <h3>⚠️ Important Disclaimers</h3>
+                    <p>This tool provides <strong>educational projections</strong> based on historical data and assumptions. Results are not guaranteed and should not be considered financial advice. Key considerations:</p>
+                    <ul>
+                        <li>Real estate provides stability, tax benefits, and utility value that aren't captured in pure return calculations</li>
+                        <li>Bitcoin is highly volatile and speculative - past performance doesn't guarantee future results</li>
+                        <li>Your personal situation, risk tolerance, and local market conditions should guide your decisions</li>
+                        <li>Consider consulting with financial and tax professionals before making major investment decisions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <div class="real-estate-inputs">
+                <h2>Real Estate Investment</h2>
+                <div class="input-group">
+                    <label for="property-price">Property Price ($)</label>
+                    <input type="number" id="property-price" value="435000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="down-payment">Down Payment ($)</label>
+                    <input type="number" id="down-payment" value="87000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="interest-rate">Mortgage Interest Rate (%)</label>
+                    <input type="number" id="interest-rate" value="6.7" min="0" max="20" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="rental-yield">Annual Rental Yield (%)</label>
+                    <input type="number" id="rental-yield" value="0" min="0" max="20" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="property-appreciation">Annual Property Appreciation (%)</label>
+                    <input type="number" id="property-appreciation" value="4" min="0" max="20" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="maintenance-costs">Annual Maintenance/Costs (%)</label>
+                    <input type="number" id="maintenance-costs" value="2" min="0" max="10" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="hoa-fee">Monthly HOA Fee ($)</label>
+                    <input type="number" id="hoa-fee" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="portfolio-inputs">
+                <h2>Investment Portfolio</h2>
+                <div class="input-group">
+                    <label for="initial-investment">Initial Investment ($)</label>
+                    <input type="number" id="initial-investment" value="87000" min="0">
+                </div>
+                <div class="allocation-inputs">
+                    <h3>Portfolio Allocation (%)</h3>
+                    <div class="input-group">
+                        <label for="btc-allocation">Bitcoin ETF</label>
+                        <input type="number" id="btc-allocation" value="20" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="voo-allocation">VOO (S&P 500)</label>
+                        <input type="number" id="voo-allocation" value="20" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="treasury-allocation">Treasuries</label>
+                        <input type="number" id="treasury-allocation" value="20" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="strc-allocation">STRC (Strategy Corp)</label>
+                        <input type="number" id="strc-allocation" value="20" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="hysa-allocation">High Yield Savings</label>
+                        <input type="number" id="hysa-allocation" value="20" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <div class="rent-inputs">
+                <h2>Current Rent & Savings</h2>
+                <div class="input-group">
+                    <label for="current-rent">Current Monthly Rent ($)</label>
+                    <input type="number" id="current-rent" value="2075" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="rent-inflation">Annual Rent Inflation (%)</label>
+                    <input type="number" id="rent-inflation" value="3.5" min="0" max="20" step="0.1">
+                </div>
+            </div>
+
+            <div class="common-inputs">
+                <h2>Analysis Parameters</h2>
+                <div class="input-group">
+                    <label for="time-horizon">Time Horizon (years)</label>
+                    <input type="number" id="time-horizon" value="10" min="1" max="50">
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="calculate-btn">Calculate & Compare</button>
+            <button id="reset-btn">Reset to Defaults</button>
+        </div>
+
+        <div class="results-section" id="results" style="display: none;">
+            <h2>Investment Comparison Results</h2>
+            <div class="results-grid">
+                <div class="result-card real-estate">
+                    <h3>Real Estate Investment</h3>
+                    <div class="result-item">
+                        <span class="label">Total Investment:</span>
+                        <span class="value" id="re-total-investment">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Final Property Value:</span>
+                        <span class="value" id="re-property-value">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Total Rental Income:</span>
+                        <span class="value" id="re-rental-income">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Net Worth:</span>
+                        <span class="value" id="re-net-worth">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Annual Return:</span>
+                        <span class="value" id="re-annual-return">0%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Monthly Payment (PITI+PMI+HOA):</span>
+                        <span class="value" id="re-monthly-payment">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">  • Principal & Interest:</span>
+                        <span class="value" id="re-principal-interest">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">  • Property Tax:</span>
+                        <span class="value" id="re-property-tax">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">  • Home Insurance:</span>
+                        <span class="value" id="re-home-insurance">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">  • PMI:</span>
+                        <span class="value" id="re-pmi">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">  • HOA Fee:</span>
+                        <span class="value" id="re-hoa-fee">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Avg Monthly Savings By Renting:</span>
+                        <span class="value" id="re-monthly-savings">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Total Savings By Renting:</span>
+                        <span class="value" id="re-total-savings">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Investment Volatility:</span>
+                        <span class="value" id="re-volatility">0%</span>
+                    </div>
+                </div>
+
+                <div class="result-card bitcoin-savings">
+                    <h3>Bitcoin Savings Strategy</h3>
+                    <div class="result-item">
+                        <span class="label">Average Monthly BTC Investment:</span>
+                        <span class="value" id="btc-monthly-savings">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Total BTC Investment:</span>
+                        <span class="value" id="btc-total-investment">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Final BTC Portfolio Value:</span>
+                        <span class="value" id="btc-final-value">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">BTC Portfolio Gain:</span>
+                        <span class="value" id="btc-gain">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">BTC Annual Return:</span>
+                        <span class="value" id="btc-annual-return">0%</span>
+                    </div>
+                </div>
+
+                <div class="result-card portfolio">
+                    <h3>Investment Portfolio</h3>
+                    <div class="result-item">
+                        <span class="label">Total Investment:</span>
+                        <span class="value" id="portfolio-total-investment">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Final Portfolio Value:</span>
+                        <span class="value" id="portfolio-value">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Net Gain:</span>
+                        <span class="value" id="portfolio-gain">$0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Annual Return:</span>
+                        <span class="value" id="portfolio-annual-return">0%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Portfolio Volatility:</span>
+                        <span class="value" id="portfolio-volatility">0%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Optimized BTC Allocation:</span>
+                        <span class="value" id="optimized-btc-allocation">0%</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="comparison-summary">
+                <h3>Comparison Summary</h3>
+                <div class="winner" id="winner-summary"></div>
+                <div class="difference" id="difference-summary"></div>
+                <div class="savings-summary" id="savings-summary"></div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="comparison-chart" width="800" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
