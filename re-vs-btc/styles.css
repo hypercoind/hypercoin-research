@@ -41,6 +41,39 @@ body {
     transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.site-header {
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.site-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--bitcoin-orange);
+    transition: color 0.3s ease;
+}
+
+.site-logo:hover {
+    color: var(--bitcoin-orange-light);
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
