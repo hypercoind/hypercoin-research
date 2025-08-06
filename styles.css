@@ -1,0 +1,334 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-orange: #f7931a;
+    --dark-bg: #0d1117;
+    --card-bg: #161b22;
+    --border-color: #30363d;
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --accent-blue: #58a6ff;
+    --success-green: #238636;
+    --gradient-start: #f7931a;
+    --gradient-end: #ff6b35;
+    --accent-gold: #ffd700;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] {
+    --dark-bg: #ffffff;
+    --card-bg: #f8f9fa;
+    --border-color: #e0e0e0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #333333;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+.site-header, header {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.site-header-content, .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-logo, .logo {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.8rem;
+    font-weight: 600;
+    background: linear-gradient(
+      135deg,
+      var(--gradient-start),
+      var(--gradient-end)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.hero, header {
+    padding: 5rem 0;
+    text-align: center;
+    position: relative;
+    margin-bottom: 3rem;
+}
+
+.hero::before, header::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(
+      circle,
+      rgba(247, 147, 26, 0.1) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.hero h1, header h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(
+      135deg,
+      var(--text-primary),
+      var(--primary-orange)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero p, header p {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-bottom: 4rem;
+}
+
+.theme-toggle {
+    background: none;
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+    transform: translateY(-1px);
+}
+
+/* Common button styles */
+button, .btn {
+    background: linear-gradient(45deg, var(--primary-orange), #e6841a);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
+}
+
+button:hover, .btn:hover {
+    background: linear-gradient(45deg, #e6841a, var(--primary-orange));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
+}
+
+/* Light mode button fixes */
+[data-theme="light"] button,
+[data-theme="light"] .btn {
+    background: linear-gradient(45deg, var(--primary-orange), #d17316);
+    color: white;
+    box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
+}
+
+[data-theme="light"] button:hover,
+[data-theme="light"] .btn:hover {
+    background: linear-gradient(45deg, #d17316, var(--primary-orange));
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.5);
+}
+
+/* Card styles */
+.card, .stat-card, .result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.card:hover, .stat-card:hover, .result-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-orange);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.card::before, .stat-card::before, .result-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--gradient-start),
+      var(--gradient-end)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::before, .stat-card:hover::before, .result-card:hover::before {
+    opacity: 1;
+}
+
+/* Chart container common styles */
+.chart-container {
+    position: relative;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-orange);
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto;
+    color: var(--text-primary) !important;
+}
+
+/* Light mode chart text fixes */
+[data-theme="light"] .chart-container canvas {
+    color: var(--text-primary) !important;
+}
+
+/* Input styles */
+input, select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem 15px;
+    }
+    
+    .hero h1, header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p, header p {
+        font-size: 1.1rem;
+    }
+    
+    .hero, header {
+        padding: 3rem 0;
+    }
+    
+    .chart-container {
+        padding: 1rem;
+        overflow-x: auto;
+    }
+    
+    button, .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+
+/* Animation utilities */
+@keyframes fastSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fastFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-in {
+    animation: fastSlideUp 0.6s ease forwards;
+}
+
+.animate-fade-in {
+    animation: fastFadeIn 0.25s ease forwards;
+}

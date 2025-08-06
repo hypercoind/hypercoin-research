@@ -390,7 +390,8 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll(".real-estate-inputs, .portfolio-inputs, .rent-inputs, .common-inputs, .help-section, .results-section").forEach((element, index) => {
+        // Hide all content except h1 headers initially
+        document.querySelectorAll(".real-estate-inputs, .portfolio-inputs, .rent-inputs, .common-inputs, .help-section, .results-section, .controls, header p").forEach((element, index) => {
             element.style.opacity = "0";
             element.style.transform = "translateY(30px)";
             element.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;

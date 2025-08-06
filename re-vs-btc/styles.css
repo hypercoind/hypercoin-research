@@ -2,6 +2,8 @@
 
 :root {
     --primary-orange: #f7931a;
+    --bitcoin-orange: #f7931a;
+    --bitcoin-orange-dark: #e6841a;
     --dark-bg: #0d1117;
     --card-bg: #161b22;
     --border-color: #30363d;
@@ -22,6 +24,8 @@
     --text-primary: #1a1a1a;
     --text-secondary: #333333;
     --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --bitcoin-orange: #f7931a;
+    --bitcoin-orange-dark: #d17316;
 }
 
 * {
@@ -428,6 +432,18 @@ header p {
     box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
 }
 
+/* Light mode button fixes for better contrast */
+[data-theme="light"] #calculate-btn {
+    background: linear-gradient(45deg, var(--bitcoin-orange), var(--bitcoin-orange-dark));
+    color: white;
+    box-shadow: 0 2px 4px rgba(247, 147, 26, 0.4);
+}
+
+[data-theme="light"] #calculate-btn:hover {
+    background: linear-gradient(45deg, var(--bitcoin-orange-dark), var(--bitcoin-orange));
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.5);
+}
+
 #reset-btn {
     background: none;
     border: 2px solid var(--border-color);
@@ -639,6 +655,8 @@ header p {
 #comparison-chart {
     max-width: 100%;
     height: auto;
+    width: 100%;
+    min-height: 300px;
 }
 
 .chart-container canvas {
@@ -721,6 +739,15 @@ header p {
     
     .assumptions-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        padding: 1rem;
+        overflow-x: auto;
+    }
+    
+    #comparison-chart {
+        min-height: 250px;
     }
 }
 

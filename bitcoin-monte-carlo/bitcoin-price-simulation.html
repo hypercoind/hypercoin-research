@@ -703,14 +703,14 @@
                         title: {
                             display: true,
                             text: 'Bitcoin Price Projections - Percentile Ranges',
-                            color: '#f7931a',
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
                             font: {
                                 size: 16
                             }
                         },
                         legend: {
                             labels: {
-                                color: '#e0e0e0'
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
                             }
                         },
                         tooltip: {
@@ -725,31 +725,31 @@
                         y: {
                             type: 'logarithmic',
                             ticks: {
-                                color: '#e0e0e0',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
                                 callback: function (value) {
                                     return formatPrice(value);
                                 }
                             },
                             grid: {
-                                color: '#333'
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
                             },
                             title: {
                                 display: true,
                                 text: 'Price (USD)',
-                                color: '#e0e0e0'
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
                             }
                         },
                         x: {
                             ticks: {
-                                color: '#e0e0e0'
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
                             },
                             grid: {
-                                color: '#333'
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
                             },
                             title: {
                                 display: true,
                                 text: 'Time Horizon',
-                                color: '#e0e0e0'
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
                             }
                         }
                     },
@@ -854,7 +854,31 @@
                 themeToggle.innerHTML = '🌙 Dark';
                 localStorage.setItem('theme', 'light');
             }
+            
+            // Update chart colors if chart exists
+            if (chart) {
+                updateChartColors();
+            }
         });
+        
+        // Function to update chart colors based on theme
+        function updateChartColors() {
+            if (!chart) return;
+            
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+            const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+            
+            chart.options.plugins.title.color = textColor;
+            chart.options.plugins.legend.labels.color = textColor;
+            chart.options.scales.x.ticks.color = textColor;
+            chart.options.scales.x.title.color = textColor;
+            chart.options.scales.x.grid.color = gridColor;
+            chart.options.scales.y.ticks.color = textColor;
+            chart.options.scales.y.title.color = textColor;
+            chart.options.scales.y.grid.color = gridColor;
+            
+            chart.update();
+        }
 
         // Add scroll effect to header (like hypercoin-development)
         window.addEventListener("scroll", () => {
@@ -883,10 +907,11 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll(".stat-card, .chart-container, .controls").forEach((element) => {
+        // Hide all content except h1 headers initially
+        document.querySelectorAll(".stat-card, .chart-container, .controls, .probability-table, .disclaimer-section, .hero p").forEach((element, index) => {
             element.style.opacity = "0";
             element.style.transform = "translateY(30px)";
-            element.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+            element.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
             observer.observe(element);
         });
 
