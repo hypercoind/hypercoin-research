@@ -628,7 +628,7 @@ header p {
     max-width: 100%;
     height: auto;
     width: 100%;
-    min-height: 300px;
+    min-height: 600px;
 }
 
 .chart-container canvas {
@@ -714,8 +714,9 @@ header p {
     }
     
     #comparison-chart {
-        min-height: 250px;
-        max-height: 300px;
+        margin-top: 1rem;
+        width: 100%;
+        min-height: 450px;
     }
 }
 
