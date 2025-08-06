@@ -260,7 +260,7 @@
 
         .chart-container {
             position: relative;
-            height: 500px;
+            height: 600px;
             background: var(--card-bg);
             padding: 2rem;
             border-radius: 12px;
@@ -404,14 +404,59 @@
             font-weight: 600;
         }
 
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 18px;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            background: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Hide content immediately when coming from homepage */
+        html.from-homepage main {
+            visibility: hidden !important;
+        }
+        
+        html.from-homepage .loading-overlay {
+            display: flex !important;
+            opacity: 1 !important;
         }
 
         @media (max-width: 768px) {
@@ -430,10 +475,21 @@
 
             .chart-container {
                 padding: 20px;
-                height: 400px;
+                height: 500px;
             }
         }
     </style>
+    
+    <script>
+        // Check if we're coming from homepage and add class immediately
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromHomepage = urlParams.get('fromHomepage') === 'true';
+        
+        if (fromHomepage) {
+            // Add class to document element immediately before body renders
+            document.documentElement.classList.add('from-homepage');
+        }
+    </script>
 </head>
 
 <body>
@@ -483,7 +539,11 @@
                 <button class="run-simulation-btn" onclick="runSimulation()">Run Simulation</button>
             </div>
 
-            <div id="loading" class="loading" style="display: none;">Running simulation...</div>
+            <div id="loading" class="loading-overlay" style="display: none;">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Running Bitcoin Monte Carlo Simulation</div>
+                <div class="loading-subtext">Computing probability distributions across multiple time horizons...</div>
+            </div>
 
             <div class="chart-container">
                 <canvas id="priceChart"></canvas>
@@ -515,6 +575,8 @@
 
     <script>
         let chart = null;
+        
+        // fromHomepage is already detected in the head script
 
         // Box-Muller transform for normal distribution
         function randomNormal() {
@@ -570,7 +632,12 @@
         // Run the simulation
         async function runSimulation() {
             const loading = document.getElementById('loading');
-            loading.style.display = 'block';
+            
+            // Only show loading if not already visible (from homepage)
+            if (loading.style.display !== 'flex') {
+                loading.style.display = 'flex';
+                loading.style.opacity = '1';
+            }
 
             // Get parameters
             const currentPrice = parseFloat(document.getElementById('currentPrice').value);
@@ -635,7 +702,22 @@
 
             updateProbabilityTable(probabilities);
 
-            loading.style.display = 'none';
+            // Smooth fade-out animation and show main content if coming from homepage
+            loading.style.opacity = '0';
+            setTimeout(() => {
+                loading.style.display = 'none';
+                // Check if we came from homepage and clean up
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('fromHomepage') === 'true') {
+                    // Remove the class to show main content
+                    document.documentElement.classList.remove('from-homepage');
+                    const main = document.querySelector('main');
+                    main.style.visibility = 'visible';
+                    // Clean up URL by removing the fromHomepage parameter
+                    const newUrl = window.location.href.split('?')[0];
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            }, 300);
         }
 
         // Update chart
@@ -644,6 +726,18 @@
 
             if (chart) {
                 chart.destroy();
+            }
+            
+            // Get theme colors using the same approach as re-vs-btc
+            const computedStyle = getComputedStyle(document.body);
+            let textColor = computedStyle.getPropertyValue('--text-primary').trim();
+            let gridColor = computedStyle.getPropertyValue('--border-color').trim();
+            
+            // Fallback colors if CSS variables aren't loaded yet
+            if (!textColor) {
+                const isLight = document.body.getAttribute('data-theme') === 'light';
+                textColor = isLight ? '#1a1a1a' : '#f0f6fc';
+                gridColor = isLight ? '#e0e0e0' : '#30363d';
             }
 
             const datasets = [
@@ -699,18 +793,26 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
                     plugins: {
                         title: {
                             display: true,
                             text: 'Bitcoin Price Projections - Percentile Ranges',
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                            color: textColor,
                             font: {
                                 size: 16
                             }
                         },
                         legend: {
                             labels: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                color: textColor
                             }
                         },
                         tooltip: {
@@ -725,31 +827,33 @@
                         y: {
                             type: 'logarithmic',
                             ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                color: textColor,
+                                maxTicksLimit: 8,
+                                padding: 10,
                                 callback: function (value) {
                                     return formatPrice(value);
                                 }
                             },
                             grid: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
+                                color: gridColor
                             },
                             title: {
                                 display: true,
                                 text: 'Price (USD)',
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                color: textColor
                             }
                         },
                         x: {
                             ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                color: textColor
                             },
                             grid: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-color')
+                                color: gridColor
                             },
                             title: {
                                 display: true,
                                 text: 'Time Horizon',
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                color: textColor
                             }
                         }
                     },
@@ -831,16 +935,6 @@
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
 
-        // Check for saved theme preference or default to dark mode
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            body.setAttribute('data-theme', 'light');
-            themeToggle.innerHTML = '🌙 Dark';
-        } else {
-            body.setAttribute('data-theme', 'dark');
-            themeToggle.innerHTML = '☀️ Light';
-        }
-
         // Theme toggle functionality
         themeToggle.addEventListener('click', function () {
             const currentTheme = body.getAttribute('data-theme');
@@ -865,8 +959,16 @@
         function updateChartColors() {
             if (!chart) return;
             
-            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
-            const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+            const computedStyle = getComputedStyle(document.body);
+            let textColor = computedStyle.getPropertyValue('--text-primary').trim();
+            let gridColor = computedStyle.getPropertyValue('--border-color').trim();
+            
+            // Fallback colors if CSS variables aren't loaded yet
+            if (!textColor) {
+                const isLight = document.body.getAttribute('data-theme') === 'light';
+                textColor = isLight ? '#1a1a1a' : '#f0f6fc';
+                gridColor = isLight ? '#e0e0e0' : '#30363d';
+            }
             
             chart.options.plugins.title.color = textColor;
             chart.options.plugins.legend.labels.color = textColor;
@@ -877,7 +979,7 @@
             chart.options.scales.y.title.color = textColor;
             chart.options.scales.y.grid.color = gridColor;
             
-            chart.update();
+            chart.update('none'); // Use 'none' for instant update without animation
         }
 
         // Add scroll effect to header (like hypercoin-development)
@@ -915,9 +1017,30 @@
             observer.observe(element);
         });
 
+        // Initialize theme and run simulation
+        function initializeApp() {
+            // Ensure theme is applied
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                body.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '🌙 Dark';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '☀️ Light';
+            }
+            
+            // Force a reflow to ensure CSS variables are applied
+            body.offsetHeight;
+            
+            // Run initial simulation after theme is set and styles are computed
+            setTimeout(() => {
+                runSimulation();
+            }, 200);
+        }
+
         // Run initial simulation
         window.onload = function () {
-            runSimulation();
+            initializeApp();
         };
     </script>
 </body>

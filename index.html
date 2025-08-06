@@ -248,6 +248,8 @@
             position: relative;
             overflow: hidden;
             animation: fadeInUp 0.6s ease-out;
+            display: flex;
+            flex-direction: column;
         }
         
         .content-card::before {
@@ -295,6 +297,11 @@
             color: var(--text-secondary);
             margin-bottom: 1.5rem;
             line-height: 1.7;
+            flex-grow: 1;
+        }
+        
+        .content-card .btn {
+            margin-top: auto;
         }
         
         footer {
@@ -383,6 +390,59 @@
             }
         }
 
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -397,6 +457,13 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Bitcoin Monte Carlo Simulator</div>
+        <div class="loading-subtext">Preparing advanced statistical analysis tools...</div>
+    </div>
+
     <!-- HTML - This is the structure and content of your page -->
     
     <header>
@@ -427,7 +494,7 @@
                     <div class="content-card">
                         <h3>Monte Carlo Simulator</h3>
                         <p>Interactive Bitcoin price projection tool using Monte Carlo methods with multiple scenarios and statistical analysis.</p>
-                        <a href="bitcoin-monte-carlo/bitcoin-price-simulation.html" class="btn">Launch</a>
+                        <a href="bitcoin-monte-carlo/bitcoin-price-simulation.html" class="btn" id="monte-carlo-link">Launch</a>
                     </div>
                     <div class="content-card">
                         <h3>Real Estate vs Bitcoin Calculator</h3>
@@ -518,6 +585,24 @@
                 const currentTheme = body.getAttribute('data-theme') || 'dark';
                 const baseUrl = this.getAttribute('href');
                 const newUrl = `${baseUrl}?theme=${currentTheme}`;
+                window.location.href = newUrl;
+            });
+        }
+
+        // Handle Monte Carlo simulator launch with loading animation
+        const monteCarloLink = document.getElementById('monte-carlo-link');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        
+        if (monteCarloLink && loadingOverlay) {
+            monteCarloLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Show loading animation
+                loadingOverlay.classList.add('show');
+                
+                // Navigate immediately with a loading flag
+                const baseUrl = this.getAttribute('href');
+                const newUrl = `${baseUrl}?fromHomepage=true`;
                 window.location.href = newUrl;
             });
         }

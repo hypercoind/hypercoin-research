@@ -552,8 +552,6 @@ class InvestmentCalculator {
         document.getElementById('re-home-insurance').textContent = formatCurrency(reResults.monthlyHomeInsurance);
         document.getElementById('re-pmi').textContent = reResults.monthlyPMI > 0 ? formatCurrency(reResults.monthlyPMI) : "N/A";
         document.getElementById('re-hoa-fee').textContent = reResults.monthlyHOAFee > 0 ? formatCurrency(reResults.monthlyHOAFee) : "N/A";
-        document.getElementById('re-monthly-savings').textContent = formatCurrency(reResults.monthlySavings);
-        document.getElementById('re-total-savings').textContent = formatCurrency(reResults.totalSavingsForOccupant);
         document.getElementById('re-volatility').textContent = formatPercent(reResults.volatility);
 
         // Portfolio Results
@@ -563,8 +561,6 @@ class InvestmentCalculator {
         document.getElementById('portfolio-annual-return').textContent = formatPercent(portfolioResults.annualReturn);
         document.getElementById('portfolio-volatility').textContent = formatPercent(portfolioResults.actualVolatility);
         document.getElementById('optimized-btc-allocation').textContent = formatPercent(portfolioResults.optimizedAllocation.btc);
-
-        // 1031 Exchange Analysis
 
         // Winner and Comparison Summary
         const winnerSummary = document.getElementById('winner-summary');
@@ -596,104 +592,6 @@ class InvestmentCalculator {
         const btcBenefit = bitcoinSavingsResults.finalValue > 0 ? 
             ` • Bitcoin strategy could yield ${formatCurrency(bitcoinSavingsResults.finalValue)} total` : '';
         savingsSummary.textContent = `Occupant ${savingsStatus} ${formatCurrency(savingsAmount)}/month on average${btcBenefit}`;
-    }
-
-    createChart(reResults, portfolioResults, bitcoinSavingsResults) {
-        const ctx = document.getElementById('comparison-chart').getContext('2d');
-        
-        if (this.chart) {
-            this.chart.destroy();
-        }
-
-        const timeHorizon = parseInt(document.getElementById('time-horizon').value);
-        const years = Array.from({length: timeHorizon + 1}, (_, i) => i);
-        
-        const realEstateValues = this.calculateYearlyValues(reResults, timeHorizon);
-        const portfolioValues = this.calculatePortfolioYearlyValues(portfolioResults, timeHorizon);
-        const bitcoinSavingsValues = this.calculateBitcoinSavingsYearlyValues(reResults, timeHorizon);
-
-        this.chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: years,
-                datasets: [{
-                    label: 'Real Estate Net Worth',
-                    data: realEstateValues,
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    borderWidth: 3,
-                    fill: false
-                }, {
-                    label: 'Investment Portfolio Value',
-                    data: portfolioValues,
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 3,
-                    fill: false
-                }, {
-                    label: 'Bitcoin Savings Strategy',
-                    data: bitcoinSavingsValues,
-                    borderColor: '#f39c12',
-                    backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                    borderWidth: 3,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: '#ffe9d7',
-                            callback: function(value) {
-                                return new Intl.NumberFormat('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                    minimumFractionDigits: 0,
-                                    maximumFractionDigits: 0
-                                }).format(value);
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(255, 233, 215, 0.2)'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#ffe9d7'
-                        },
-                        grid: {
-                            color: 'rgba(255, 233, 215, 0.2)'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Years',
-                            color: '#ffe9d7'
-                        }
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Investment Growth Over Time',
-                        color: '#ffe9d7',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            color: '#ffe9d7'
-                        },
-                        display: true,
-                        position: 'top'
-                    }
-                }
-            }
-        });
     }
 
     calculateYearlyValues(reResults, timeHorizon) {
@@ -948,123 +846,6 @@ class InvestmentCalculator {
         requestAnimationFrame(animate);
     }
 
-
-    createStaticChart(realEstateResults, portfolioResults, bitcoinSavingsResults) {
-        const chartContainer = document.querySelector('.chart-container');
-        
-        if (!chartContainer) {
-            console.error('Chart container not found!');
-            return;
-        }
-        
-        // Clear existing chart
-        if (this.chart) {
-            this.chart.destroy();
-        }
-
-        const ctx = document.getElementById('comparison-chart').getContext('2d');
-        const timeHorizon = parseInt(document.getElementById('time-horizon').value);
-        const years = Array.from({length: timeHorizon + 1}, (_, i) => i);
-
-        // Get current theme colors
-        const computedStyle = getComputedStyle(document.body);
-        const textColor = computedStyle.getPropertyValue('--text-primary').trim();
-        const borderColor = computedStyle.getPropertyValue('--border-color').trim();
-
-        // Create empty chart that will be animated later
-        this.chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: years,
-                datasets: [{
-                    label: 'Real Estate Net Worth',
-                    data: [],
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.4
-                }, {
-                    label: 'Investment Portfolio Value',
-                    data: [],
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.4
-                }, {
-                    label: 'Bitcoin Savings Strategy',
-                    data: [],
-                    borderColor: '#f7931a',
-                    backgroundColor: 'rgba(247, 147, 26, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Investment Growth Comparison Over Time',
-                        color: textColor,
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            color: textColor,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Years',
-                            color: textColor
-                        },
-                        ticks: {
-                            color: textColor
-                        },
-                        grid: {
-                            color: borderColor
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Value ($)',
-                            color: textColor
-                        },
-                        ticks: {
-                            color: textColor,
-                            callback: function(value) {
-                                return '$' + value.toLocaleString();
-                            }
-                        },
-                        grid: {
-                            color: borderColor
-                        }
-                    }
-                },
-                animation: {
-                    duration: 0
-                }
-            }
-        });
-    }
-
     createAnimatedChart(realEstateResults, portfolioResults, bitcoinSavingsResults) {
         const chartContainer = document.querySelector('.chart-container');
         
@@ -1127,6 +908,7 @@ class InvestmentCalculator {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 interaction: {
                     intersect: false,
                     mode: 'index'

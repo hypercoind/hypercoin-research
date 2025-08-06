@@ -292,7 +292,6 @@ header p {
 }
 
 .overview-card,
-.scenarios-card,
 .instructions-card,
 .assumptions-card,
 .disclaimer-card {
@@ -304,7 +303,6 @@ header p {
 }
 
 .overview-card:hover,
-.scenarios-card:hover,
 .instructions-card:hover,
 .assumptions-card:hover,
 .disclaimer-card:hover {
@@ -313,7 +311,6 @@ header p {
 }
 
 .overview-card h3,
-.scenarios-card h3,
 .instructions-card h3,
 .assumptions-card h3,
 .disclaimer-card h3 {
@@ -335,31 +332,6 @@ header p {
     line-height: 1.6;
 }
 
-.scenario {
-    background-color: var(--bg-primary);
-    padding: 1.5rem;
-    border-radius: 8px;
-    border-left: 4px solid var(--bitcoin-orange);
-    margin-bottom: 1.5rem;
-}
-
-.scenario:last-child {
-    margin-bottom: 0;
-}
-
-.scenario h4 {
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.scenario p {
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-    line-height: 1.6;
-}
-
 .instructions-card ol {
     margin-left: 1.5rem;
     color: var(--text-secondary);
@@ -377,7 +349,7 @@ header p {
 }
 
 .assumption-item {
-    background-color: var(--bg-primary);
+    background-color: var(--dark-bg);
     padding: 1rem;
     border-radius: 6px;
     border: 1px solid var(--border-color);
@@ -387,7 +359,7 @@ header p {
 }
 
 .disclaimer-card {
-    background-color: var(--bg-primary);
+    background-color: var(--dark-bg);
     border-left: 4px solid var(--accent-gold);
 }
 
@@ -593,7 +565,7 @@ header p {
 }
 
 .payment-details {
-    background-color: var(--bg-secondary);
+    background-color: var(--card-bg);
     border-radius: 6px;
     padding: 1rem;
     margin: 0.5rem 0 1rem 0;
@@ -726,14 +698,9 @@ header p {
     }
     
     .overview-card,
-    .scenarios-card,
-    .instructions-card,
+        .instructions-card,
     .assumptions-card,
     .disclaimer-card {
-        padding: 1rem;
-    }
-    
-    .scenario {
         padding: 1rem;
     }
     
@@ -748,6 +715,7 @@ header p {
     
     #comparison-chart {
         min-height: 250px;
+        max-height: 300px;
     }
 }
 
@@ -867,13 +835,10 @@ header p {
 
 @media print {
     :root {
-        --bg-primary: white;
-        --bg-secondary: #f8f9fa;
-        --bg-card: white;
-        --bg-hero: #f5f5f5;
+        --card-bg: white;
+        --dark-bg: white;
         --text-primary: #1a1a1a;
         --text-secondary: #333333;
-        --text-muted: #666666;
         --border-color: #e0e0e0;
         --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
