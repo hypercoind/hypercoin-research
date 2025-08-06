@@ -348,14 +348,14 @@
     <main>
         <section id="home" class="hero">
             <div class="container">
-                <h1>Independent Bitcoin Research</h1>
-                <p>Data-driven analysis and commentary on Bitcoin, macroeconomics, and the evolution of money.</p>
+                <h1>Bitcoin Analysis Tools</h1>
+                <p>Interactive calculators and simulations for Bitcoin investment analysis and decision-making.</p>
             </div>
         </section>
 
         <div class="container">
             <section id="research" class="content-section">
-                <h2>Research</h2>
+                <h2>Tools</h2>
                 <div class="content-grid">
                     <div class="content-card">
                         <h3>Monte Carlo Simulator</h3>
@@ -364,17 +364,17 @@
                     </div>
                     <div class="content-card">
                         <h3>Real Estate vs Bitcoin Calculator</h3>
-                        <p>Compare real estate investments with volatility-matched Bitcoin portfolios. Specialized analysis for property investments vs optimized cryptocurrency strategies.</p>
-                        <a href="re-vs-btc/index.html" class="btn">Launch</a>
+                        <p>Compare real estate ownership against diversified portfolios and Bitcoin savings strategies. Analyze mortgage payments vs. rent savings invested in bitcoin.</p>
+                        <a href="re-vs-btc/index.html" class="btn" id="re-btc-link">Launch</a>
                     </div>
                 </div>
             </section>
 
             <section id="about" class="content-section">
                 <h2>About</h2>
-                <p>Independent research on Bitcoin and macroeconomics. 
-                    All analysis is data-driven, transparent, and aims to provide clear insights into the evolving monetary landscape.</p>
-                <p><br>This research is published openly to contribute to the broader understanding of Bitcoin's role in the global economy.</p>
+                <p>A collection of analytical tools for Bitcoin and investment decision-making. 
+                    All calculations are transparent and based on historical data to help you explore different investment scenarios.</p>
+                <p><br>These tools are provided freely to help individuals make more informed investment decisions.</p>
             </section>
         </div>
     </main>
@@ -382,7 +382,7 @@
     <footer>
         <div class="container">
             <p>Follow us on <a href="https://twitter.com/hypercoind" target="_blank">Twitter</a> for updates.</p>
-            <p>&copy; 2025 Hypercoin Research. Open source research for the Bitcoin community.</p>
+            <p>&copy; 2025 Hypercoin Research. Free Bitcoin analysis tools.</p>
         </div>
     </footer>
 
@@ -443,6 +443,18 @@
             });
         });
         
+        // Handle theme passing to calculator page
+        const reBtcLink = document.getElementById('re-btc-link');
+        if (reBtcLink) {
+            reBtcLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const currentTheme = body.getAttribute('data-theme') || 'dark';
+                const baseUrl = this.getAttribute('href');
+                const newUrl = `${baseUrl}?theme=${currentTheme}`;
+                window.location.href = newUrl;
+            });
+        }
+
         // Enhanced welcome message
         console.log('🧡 Welcome to Hypercoin Research!');
         console.log('🌙 Dark mode is default - toggle with the button in the header');

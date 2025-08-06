@@ -2,10 +2,8 @@ class InvestmentCalculator {
     constructor() {
         this.initializeEventListeners();
         this.chart = null;
-        this.intersectionObserver = null;
         // Validate allocations on page load
         setTimeout(() => this.validateAllocations(), 100);
-        this.setupScrollObserver();
     }
 
     initializeEventListeners() {
@@ -400,7 +398,7 @@ class InvestmentCalculator {
         // Hide previous results
         this.hideResults();
         
-        // Simulate calculation delay for better UX
+        // Fast calculation and display
         setTimeout(() => {
             const realEstateResults = this.calculateRealEstateInvestment();
             const portfolioResults = this.calculatePortfolioInvestment();
@@ -413,25 +411,25 @@ class InvestmentCalculator {
             // Smooth scroll to results
             resultsSection.scrollIntoView({ behavior: 'smooth' });
             
-            // Display results with animations (cards only)
+            // Display results with fast animations
             setTimeout(() => {
                 this.displayResultsAnimated(realEstateResults, portfolioResults, bitcoinSavingsResults);
-            }, 300);
+            }, 100);
             
-            // Set up chart (but don't animate yet)
+            // Set up chart and display comparison immediately
             setTimeout(() => {
-                this.prepareChart(realEstateResults, portfolioResults, bitcoinSavingsResults);
-                this.setupScrollTriggers();
-            }, 1500);
+                this.displayComparison(realEstateResults, portfolioResults, bitcoinSavingsResults);
+                this.createAnimatedChart(realEstateResults, portfolioResults, bitcoinSavingsResults);
+            }, 200);
             
             // Reset button state
             setTimeout(() => {
                 calculateBtn.textContent = 'Calculate & Compare';
                 calculateBtn.classList.remove('calculating');
                 resultsSection.classList.remove('animating');
-            }, 2000);
+            }, 400);
             
-        }, 800);
+        }, 300);
     }
 
     calculateBitcoinSavings(reResults) {
@@ -825,35 +823,6 @@ class InvestmentCalculator {
         return values;
     }
 
-    // Scroll-based animation setup
-    setupScrollObserver() {
-        // Set up intersection observer for scroll-triggered animations
-        this.intersectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const target = entry.target;
-                    
-                    if (target.classList.contains('comparison-summary')) {
-                        setTimeout(() => {
-                            target.classList.add('animate-fade-in');
-                        }, 300); // Small delay for natural feel
-                    }
-                    
-                    if (target.classList.contains('chart-container')) {
-                        setTimeout(() => {
-                            this.animateChart();
-                        }, 200);
-                    }
-                    
-                    // Stop observing once animated
-                    this.intersectionObserver.unobserve(target);
-                }
-            });
-        }, {
-            threshold: 0.1, // Trigger when 10% of element is visible
-            rootMargin: '0px 0px -50px 0px' // Trigger slightly before fully in view
-        });
-    }
 
     // Animation helper functions
     hideResults() {
@@ -891,25 +860,29 @@ class InvestmentCalculator {
             return;
         }
         
-        // Animate cards with smoother, staggered timing
+        // Animate cards with fast, tight timing
         resultCards.forEach((card, index) => {
             setTimeout(() => {
                 card.classList.add('animate-card');
                 this.animateCardValues(card);
-            }, index * 400 + 200); // Slower, more spaced out
+            }, index * 150 + 50); // Much faster
         });
     }
 
-    setupScrollTriggers() {
+    displayComparison(realEstateResults, portfolioResults, bitcoinSavingsResults) {
         const comparisonSummary = document.querySelector('.comparison-summary');
-        const chartContainer = document.querySelector('.chart-container');
         
         if (comparisonSummary) {
-            this.intersectionObserver.observe(comparisonSummary);
+            // Show comparison summary immediately with fast animation
+            setTimeout(() => {
+                comparisonSummary.classList.add('animate-fade-in');
+            }, 50);
         }
         
+        // Display the chart container immediately
+        const chartContainer = document.querySelector('.chart-container');
         if (chartContainer) {
-            this.intersectionObserver.observe(chartContainer);
+            chartContainer.classList.add('animate-in');
         }
     }
 
@@ -919,7 +892,7 @@ class InvestmentCalculator {
             setTimeout(() => {
                 element.classList.add('animate-value');
                 this.animateNumber(element);
-            }, index * 150 + 200); // Slower, more spaced timing
+            }, index * 20 + 30); // Much faster timing
         });
     }
 
@@ -931,7 +904,7 @@ class InvestmentCalculator {
         
         if (targetNum === 0 || isNaN(targetNum)) return;
         
-        const duration = 1800; // Longer duration for smoother feel
+        const duration = 300; // Much faster number animation
         const startTime = performance.now();
         const isPercent = text.includes('%');
         const isCurrency = text.includes('$');
@@ -975,33 +948,6 @@ class InvestmentCalculator {
         requestAnimationFrame(animate);
     }
 
-    prepareChart(realEstateResults, portfolioResults, bitcoinSavingsResults) {
-        // Store results for later animation
-        this.chartData = {
-            realEstateResults,
-            portfolioResults,
-            bitcoinSavingsResults
-        };
-        
-        // Create the chart but don't animate it yet
-        this.createStaticChart(realEstateResults, portfolioResults, bitcoinSavingsResults);
-    }
-
-    animateChart() {
-        const chartContainer = document.querySelector('.chart-container');
-        
-        if (!chartContainer || !this.chartData) {
-            return;
-        }
-        
-        // Add animation class to container
-        chartContainer.classList.add('animate-in');
-        
-        // Start the animated chart plotting
-        setTimeout(() => {
-            this.createAnimatedChart(this.chartData.realEstateResults, this.chartData.portfolioResults, this.chartData.bitcoinSavingsResults);
-        }, 400);
-    }
 
     createStaticChart(realEstateResults, portfolioResults, bitcoinSavingsResults) {
         const chartContainer = document.querySelector('.chart-container');
@@ -1019,6 +965,11 @@ class InvestmentCalculator {
         const ctx = document.getElementById('comparison-chart').getContext('2d');
         const timeHorizon = parseInt(document.getElementById('time-horizon').value);
         const years = Array.from({length: timeHorizon + 1}, (_, i) => i);
+
+        // Get current theme colors
+        const computedStyle = getComputedStyle(document.body);
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim();
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim();
 
         // Create empty chart that will be animated later
         this.chart = new Chart(ctx, {
@@ -1061,7 +1012,7 @@ class InvestmentCalculator {
                     title: {
                         display: true,
                         text: 'Investment Growth Comparison Over Time',
-                        color: 'var(--text-primary)',
+                        color: textColor,
                         font: {
                             size: 16,
                             weight: 'bold'
@@ -1069,7 +1020,7 @@ class InvestmentCalculator {
                     },
                     legend: {
                         labels: {
-                            color: 'var(--text-primary)',
+                            color: textColor,
                             font: {
                                 size: 12
                             }
@@ -1081,29 +1032,29 @@ class InvestmentCalculator {
                         title: {
                             display: true,
                             text: 'Years',
-                            color: 'var(--text-primary)'
+                            color: textColor
                         },
                         ticks: {
-                            color: 'var(--text-primary)'
+                            color: textColor
                         },
                         grid: {
-                            color: 'var(--border-color)'
+                            color: borderColor
                         }
                     },
                     y: {
                         title: {
                             display: true,
                             text: 'Value ($)',
-                            color: 'var(--text-primary)'
+                            color: textColor
                         },
                         ticks: {
-                            color: 'var(--text-primary)',
+                            color: textColor,
                             callback: function(value) {
                                 return '$' + value.toLocaleString();
                             }
                         },
                         grid: {
-                            color: 'var(--border-color)'
+                            color: borderColor
                         }
                     }
                 },
@@ -1133,6 +1084,11 @@ class InvestmentCalculator {
         const ctx = document.getElementById('comparison-chart').getContext('2d');
         const timeHorizon = parseInt(document.getElementById('time-horizon').value);
         const years = Array.from({length: timeHorizon + 1}, (_, i) => i);
+
+        // Get current theme colors
+        const computedStyle = getComputedStyle(document.body);
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim();
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim();
         
         const realEstateValues = this.calculateYearlyValues(realEstateResults, timeHorizon);
         const portfolioValues = this.calculatePortfolioYearlyValues(portfolioResults, timeHorizon);
@@ -1179,7 +1135,7 @@ class InvestmentCalculator {
                     title: {
                         display: true,
                         text: 'Investment Growth Comparison Over Time',
-                        color: 'var(--text-primary)',
+                        color: textColor,
                         font: {
                             size: 16,
                             weight: 'bold'
@@ -1187,7 +1143,7 @@ class InvestmentCalculator {
                     },
                     legend: {
                         labels: {
-                            color: 'var(--text-primary)',
+                            color: textColor,
                             font: {
                                 size: 12
                             }
@@ -1199,29 +1155,29 @@ class InvestmentCalculator {
                         title: {
                             display: true,
                             text: 'Years',
-                            color: 'var(--text-primary)'
+                            color: textColor
                         },
                         ticks: {
-                            color: 'var(--text-primary)'
+                            color: textColor
                         },
                         grid: {
-                            color: 'var(--border-color)'
+                            color: borderColor
                         }
                     },
                     y: {
                         title: {
                             display: true,
                             text: 'Value ($)',
-                            color: 'var(--text-primary)'
+                            color: textColor
                         },
                         ticks: {
-                            color: 'var(--text-primary)',
+                            color: textColor,
                             callback: function(value) {
                                 return '$' + value.toLocaleString();
                             }
                         },
                         grid: {
-                            color: 'var(--border-color)'
+                            color: borderColor
                         }
                     }
                 },
@@ -1238,7 +1194,7 @@ class InvestmentCalculator {
     animateChartData(realEstateValues, portfolioValues, bitcoinSavingsValues, timeHorizon) {
         let currentPoint = 0;
         const totalPoints = timeHorizon + 1;
-        const animationDuration = 2000; // 2 seconds total
+        const animationDuration = 600; // Much faster - 600ms total
         const pointDelay = animationDuration / totalPoints;
 
         const animateNextPoint = () => {
@@ -1256,7 +1212,29 @@ class InvestmentCalculator {
             }
         };
 
-        setTimeout(animateNextPoint, 500); // Start after a brief delay
+        setTimeout(animateNextPoint, 100); // Start quickly
+    }
+
+    updateChartColors() {
+        if (!this.chart) return;
+        
+        // Get current theme colors
+        const computedStyle = getComputedStyle(document.body);
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim();
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim();
+        
+        // Update chart colors
+        this.chart.options.plugins.title.color = textColor;
+        this.chart.options.plugins.legend.labels.color = textColor;
+        this.chart.options.scales.x.title.color = textColor;
+        this.chart.options.scales.x.ticks.color = textColor;
+        this.chart.options.scales.x.grid.color = borderColor;
+        this.chart.options.scales.y.title.color = textColor;
+        this.chart.options.scales.y.ticks.color = textColor;
+        this.chart.options.scales.y.grid.color = borderColor;
+        
+        // Update the chart
+        this.chart.update('none'); // Use 'none' for instant update without animation
     }
 
     resetToDefaults() {
@@ -1289,5 +1267,5 @@ class InvestmentCalculator {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new InvestmentCalculator();
+    window.calculator = new InvestmentCalculator();
 });

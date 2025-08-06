@@ -1,6 +1,6 @@
 # Hypercoin Research
 
-A simple website for publishing Bitcoin and cryptocurrency research.
+A simple website for publishing Bitcoin research.
 
 ## Deployment
 

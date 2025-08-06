@@ -14,6 +14,18 @@
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-hero: #f5f5f5;
+    --text-primary: #1a1a1a;
+    --text-secondary: #333333;
+    --text-muted: #666666;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -26,7 +38,7 @@ body {
     color: var(--text-primary);
     background-color: var(--bg-primary);
     min-height: 100vh;
-    transition: all 0.3s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .container {
@@ -82,7 +94,7 @@ header p {
     border-radius: 12px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
 }
@@ -152,7 +164,7 @@ header p {
     font-size: 16px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: var(--bg-primary);
-    transition: all 0.3s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     color: var(--text-primary);
 }
 
@@ -219,7 +231,7 @@ header p {
     padding: 1.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .overview-card:hover,
@@ -227,7 +239,7 @@ header p {
 .instructions-card:hover,
 .assumptions-card:hover,
 .disclaimer-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(247, 147, 26, 0.15);
 }
 
@@ -335,7 +347,7 @@ header p {
     font-weight: 600;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
 }
 
@@ -347,7 +359,7 @@ header p {
 
 #calculate-btn:hover {
     background: linear-gradient(45deg, var(--bitcoin-orange-dark), var(--bitcoin-orange));
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(247, 147, 26, 0.4);
 }
 
@@ -360,7 +372,27 @@ header p {
 #reset-btn:hover {
     border-color: var(--bitcoin-orange);
     color: var(--bitcoin-orange);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+}
+
+.theme-toggle {
+    background: none;
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.theme-toggle:hover {
+    border-color: var(--bitcoin-orange);
+    color: var(--bitcoin-orange);
 }
 
 .results-section {
@@ -406,7 +438,7 @@ header p {
     border-radius: 12px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
 }
@@ -422,7 +454,7 @@ header p {
 }
 
 .result-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-1px);
     box-shadow: 0 8px 25px rgba(247, 147, 26, 0.15);
 }
 
@@ -452,6 +484,44 @@ header p {
     font-weight: 700;
     color: var(--text-primary);
     font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.expand-details-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+    width: 100%;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.expand-details-btn:hover {
+    border-color: var(--bitcoin-orange);
+    color: var(--bitcoin-orange);
+    transform: translateY(-1px);
+}
+
+.payment-details {
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 0.5rem 0 1rem 0;
+    border: 1px solid var(--border-color);
+}
+
+.payment-details .result-item {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.payment-details .result-item:last-child {
+    margin-bottom: 0;
 }
 
 
@@ -585,11 +655,11 @@ header p {
     }
 }
 
-/* Animation Keyframes - Smooth linear easing */
-@keyframes slideInUp {
+/* Fast, smooth animations */
+@keyframes fastSlideUp {
     0% {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(15px);
     }
     100% {
         opacity: 1;
@@ -597,10 +667,10 @@ header p {
     }
 }
 
-@keyframes fadeInScale {
+@keyframes fastFadeIn {
     0% {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.98);
     }
     100% {
         opacity: 1;
@@ -608,58 +678,26 @@ header p {
     }
 }
 
-@keyframes countUp {
-    0% {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes pulse {
-    0% {
+@keyframes quickPulse {
+    0%, 100% {
         transform: scale(1);
     }
     50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
+        transform: scale(1.02);
     }
 }
 
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-/* Animation Classes - Smoother timing */
+/* Animation Classes - Fast and smooth */
 .animate-card {
-    animation: slideInUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: fastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-fade-in {
-    animation: fadeInScale 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: fastFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-value {
-    animation: countUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.loading-shimmer {
-    background: linear-gradient(90deg, 
-        var(--bg-card) 25%, 
-        var(--bg-secondary) 50%, 
-        var(--bg-card) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+    animation: fastFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .calculating {
@@ -668,14 +706,14 @@ header p {
 }
 
 .calculating .btn {
-    animation: pulse 1s infinite;
+    animation: quickPulse 0.8s infinite;
 }
 
-/* Chart Animation */
+/* Chart Animation - Much faster */
 .chart-container {
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s ease-out;
+    transform: translateY(10px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .chart-container.animate-in {
@@ -683,59 +721,52 @@ header p {
     transform: translateY(0);
 }
 
-/* Staggered Animation Delays */
+/* Minimal staggered delays */
 .result-card:nth-child(1) {
-    animation-delay: 0.1s;
+    animation-delay: 0s;
 }
 
 .result-card:nth-child(2) {
-    animation-delay: 0.3s;
+    animation-delay: 0.05s;
 }
 
 .result-card:nth-child(3) {
-    animation-delay: 0.5s;
+    animation-delay: 0.1s;
 }
 
 .comparison-summary {
-    animation-delay: 0.7s;
+    animation-delay: 0.15s;
 }
 
-/* Animation states - Smoother transitions */
+/* Fast default transitions */
 .result-card {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .comparison-summary {
     opacity: 1;
     transform: scale(1);
-    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.chart-container {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                transform 1.0s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Hide elements initially when starting animation */
+/* Initial hidden states - minimal displacement */
 .results-section.animating .result-card:not(.animate-card) {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(10px);
 }
 
 .results-section.animating .comparison-summary:not(.animate-fade-in) {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
 .results-section.animating .chart-container:not(.animate-in) {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(5px);
 }
 
 @media print {

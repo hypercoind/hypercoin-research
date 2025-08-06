@@ -9,94 +9,10 @@
 <body>
     <div class="container">
         <header>
+            <button class="theme-toggle" id="theme-toggle">☀️ Light</button>
             <h1>Real Estate or BTC?</h1>
             <p>Compare real estate investments with volatility-matched Bitcoin portfolios using US median market data</p>
         </header>
-
-        <div class="help-section">
-            <h2>📚 How to Use This Calculator</h2>
-            
-            <div class="help-content">
-                <div class="overview-card">
-                    <h3>🎯 Tool Purpose</h3>
-                    <p>This calculator helps you compare three common wealth-building strategies:</p>
-                    <ul>
-                        <li><strong>Real Estate Investment:</strong> Buying property with a mortgage and building equity over time</li>
-                        <li><strong>Portfolio Investment:</strong> Investing a lump sum across diversified assets (Bitcoin, stocks, bonds, savings)</li>
-                        <li><strong>Bitcoin Savings Strategy:</strong> Using monthly rent vs. mortgage savings to dollar-cost average into Bitcoin</li>
-                    </ul>
-                </div>
-
-                <div class="scenarios-card">
-                    <h3>🤔 Common Decision Scenarios</h3>
-                    
-                    <div class="scenario">
-                        <h4>Scenario 1: "Should I save for a down payment or invest in Bitcoin?"</h4>
-                        <p><strong>How to use:</strong> Set the property price to your target home, adjust the down payment to your savings goal, and compare the real estate investment with the Bitcoin savings strategy results.</p>
-                        <p><strong>Key insight:</strong> See whether renting and investing your would-be mortgage payments in Bitcoin outperforms buying property.</p>
-                    </div>
-
-                    <div class="scenario">
-                        <h4>Scenario 2: "I have $100K. Should I put it toward a house or invest it?"</h4>
-                        <p><strong>How to use:</strong> Set your available cash as both the down payment and initial portfolio investment. Compare real estate returns with the diversified portfolio results.</p>
-                        <p><strong>Key insight:</strong> Compare the leveraged real estate investment against a balanced portfolio approach.</p>
-                    </div>
-
-                    <div class="scenario">
-                        <h4>Scenario 3: "I'm renting and have extra cash flow. What should I do with it?"</h4>
-                        <p><strong>How to use:</strong> Enter your actual monthly rent in the "Current Rent & Savings" section. The calculator will compute your monthly savings by renting vs. buying and show how investing those savings in Bitcoin could compound over time.</p>
-                        <p><strong>Key insight:</strong> Discover whether your rent savings, when invested consistently, could outpace property ownership returns based on your real rent costs.</p>
-                    </div>
-                </div>
-
-                <div class="instructions-card">
-                    <h3>⚙️ Usage Instructions</h3>
-                    <ol>
-                        <li><strong>Real Estate Inputs:</strong> Enter property details, mortgage terms, and ownership costs. Defaults are set to US median values.</li>
-                        <li><strong>Portfolio Inputs:</strong> Set your available investment capital and adjust asset allocation percentages (must total 100%).</li>
-                        <li><strong>Current Rent & Savings:</strong> Enter your actual monthly rent and expected annual rent increases. These determine your monthly savings available for Bitcoin investment.</li>
-                        <li><strong>Time Horizon:</strong> Choose your investment timeframe (typically 5-20 years).</li>
-                        <li><strong>Calculate:</strong> Click "Calculate & Compare" to see detailed results and projections.</li>
-                        <li><strong>Analyze:</strong> Review the comparison summary and chart to understand which strategy performs best for your situation.</li>
-                    </ol>
-                </div>
-
-                <div class="assumptions-card">
-                    <h3>📊 Key Assumptions & Methodology</h3>
-                    <div class="assumptions-grid">
-                        <div class="assumption-item">
-                            <strong>Property Appreciation:</strong> 4% annually (US historical average)
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Rent Inflation:</strong> User configurable (default 3.5% annually)
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Bitcoin Growth:</strong> Modeled with decreasing volatility over time as the market matures
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Portfolio Returns:</strong> Based on historical asset class performance
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Tax Considerations:</strong> Not included - consult a tax professional for your specific situation
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Monthly Savings:</strong> Calculated as the difference between mortgage payments (PITI+PMI+HOA) and your actual rent input
-                        </div>
-                    </div>
-                </div>
-
-                <div class="disclaimer-card">
-                    <h3>⚠️ Important Disclaimers</h3>
-                    <p>This tool provides <strong>educational projections</strong> based on historical data and assumptions. Results are not guaranteed and should not be considered financial advice. Key considerations:</p>
-                    <ul>
-                        <li>Real estate provides stability, tax benefits, and utility value that aren't captured in pure return calculations</li>
-                        <li>Bitcoin is highly volatile and speculative - past performance doesn't guarantee future results</li>
-                        <li>Your personal situation, risk tolerance, and local market conditions should guide your decisions</li>
-                        <li>Consider consulting with financial and tax professionals before making major investment decisions</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
 
         <div class="input-section">
             <div class="real-estate-inputs">
@@ -163,7 +79,7 @@
             </div>
 
             <div class="rent-inputs">
-                <h2>Current Rent & Savings</h2>
+                <h2>Rent Compare</h2>
                 <div class="input-group">
                     <label for="current-rent">Current Monthly Rent ($)</label>
                     <input type="number" id="current-rent" value="2075" min="0">
@@ -214,35 +130,41 @@
                         <span class="value" id="re-annual-return">0%</span>
                     </div>
                     <div class="result-item">
-                        <span class="label">Monthly Payment (PITI+PMI+HOA):</span>
+                        <span class="label">Monthly Payment:</span>
                         <span class="value" id="re-monthly-payment">$0</span>
                     </div>
-                    <div class="result-item">
-                        <span class="label">  • Principal & Interest:</span>
-                        <span class="value" id="re-principal-interest">$0</span>
+                    
+                    <button class="expand-details-btn" onclick="togglePaymentDetails()">📊 View Payment Breakdown</button>
+                    
+                    <div class="payment-details" id="payment-details" style="display: none;">
+                        <div class="result-item">
+                            <span class="label">Principal & Interest:</span>
+                            <span class="value" id="re-principal-interest">$0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Property Tax:</span>
+                            <span class="value" id="re-property-tax">$0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Home Insurance:</span>
+                            <span class="value" id="re-home-insurance">$0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">PMI:</span>
+                            <span class="value" id="re-pmi">$0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">HOA Fee:</span>
+                            <span class="value" id="re-hoa-fee">$0</span>
+                        </div>
                     </div>
+                    
                     <div class="result-item">
-                        <span class="label">  • Property Tax:</span>
-                        <span class="value" id="re-property-tax">$0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="label">  • Home Insurance:</span>
-                        <span class="value" id="re-home-insurance">$0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="label">  • PMI:</span>
-                        <span class="value" id="re-pmi">$0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="label">  • HOA Fee:</span>
-                        <span class="value" id="re-hoa-fee">$0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="label">Avg Monthly Savings By Renting:</span>
+                        <span class="label">Monthly Rent Savings:</span>
                         <span class="value" id="re-monthly-savings">$0</span>
                     </div>
                     <div class="result-item">
-                        <span class="label">Total Savings By Renting:</span>
+                        <span class="label">Total Rent Savings:</span>
                         <span class="value" id="re-total-savings">$0</span>
                     </div>
                     <div class="result-item">
@@ -316,9 +238,123 @@
                 <canvas id="comparison-chart" width="800" height="400"></canvas>
             </div>
         </div>
+
+        <div class="help-section">
+            <h2>📚 About This Calculator</h2>
+            
+            <div class="help-content">
+                <div class="overview-card">
+                    <h3>🎯 What It Does</h3>
+                    <p>Compare three wealth-building strategies: <strong>real estate ownership</strong>, <strong>diversified investing</strong>, and <strong>Bitcoin savings</strong> (using rent vs. mortgage savings).</p>
+                </div>
+
+                <div class="instructions-card">
+                    <h3>⚙️ Quick Start</h3>
+                    <ol>
+                        <li>Adjust property price and down payment</li>
+                        <li>Set portfolio allocation (must total 100%)</li>
+                        <li>Enter your current rent</li>
+                        <li>Choose time horizon and calculate</li>
+                    </ol>
+                </div>
+
+                <div class="assumptions-card">
+                    <h3>📊 Key Assumptions</h3>
+                    <div class="assumptions-grid">
+                        <div class="assumption-item">
+                            <strong>Property:</strong> 4% annual appreciation, 2% maintenance costs
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Taxes:</strong> Not included - consult a tax professional
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Bitcoin:</strong> Modeled with decreasing volatility over time
+                        </div>
+                        <div class="assumption-item">
+                            <strong>Portfolio:</strong> Based on historical asset performance
+                        </div>
+                    </div>
+                </div>
+
+                <div class="disclaimer-card">
+                    <h3>⚠️ Disclaimer</h3>
+                    <p><strong>Educational tool only.</strong> Results are projections, not guarantees. Real estate offers stability and tax benefits not captured here. Bitcoin is volatile. Consider your personal situation and consult professionals for major decisions.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Theme Management - Initialize on page load
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        // Function to apply theme
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                body.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '🌙 Dark';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '☀️ Light';
+            }
+        }
+        
+        // Check for saved theme preference or default to dark mode
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            applyTheme('dark');
+        }
+        
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'light') {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                applyTheme('light');
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Update chart colors if calculator is loaded and chart exists
+            if (window.calculator && window.calculator.chart) {
+                window.calculator.updateChartColors();
+            }
+        });
+        
+        // Handle theme from URL parameter (for carrying over from main page)
+        const urlParams = new URLSearchParams(window.location.search);
+        const themeParam = urlParams.get('theme');
+        if (themeParam && (themeParam === 'light' || themeParam === 'dark')) {
+            applyTheme(themeParam);
+            localStorage.setItem('theme', themeParam);
+            // Clean up URL by removing the theme parameter
+            const newUrl = window.location.href.split('?')[0];
+            window.history.replaceState({}, document.title, newUrl);
+        }
+        
+        // Toggle payment details function
+        function togglePaymentDetails() {
+            const details = document.getElementById('payment-details');
+            const button = document.querySelector('.expand-details-btn');
+            
+            if (details.style.display === 'none' || details.style.display === '') {
+                details.style.display = 'block';
+                button.innerHTML = '📊 Hide Payment Breakdown';
+            } else {
+                details.style.display = 'none';
+                button.innerHTML = '📊 View Payment Breakdown';
+            }
+        }
+        
+        // Make function globally accessible
+        window.togglePaymentDetails = togglePaymentDetails;
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
