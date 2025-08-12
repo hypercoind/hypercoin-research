@@ -234,6 +234,46 @@
             transform: translateY(-1px);
         }
 
+        .price-input-container {
+            position: relative;
+        }
+
+        .price-loading {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .price-spinner {
+            animation: spin 1s linear infinite;
+            font-size: 14px;
+            color: var(--primary-orange);
+        }
+
+        .loading-text {
+            font-weight: 500;
+        }
+
+        .price-info {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .price-source {
+            font-weight: 500;
+            color: var(--primary-orange);
+        }
+
         .run-simulation-btn {
             background: linear-gradient(
               135deg,
@@ -449,15 +489,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Hide content immediately when coming from homepage */
-        html.from-homepage main {
-            visibility: hidden !important;
-        }
-        
-        html.from-homepage .loading-overlay {
-            display: flex !important;
-            opacity: 1 !important;
-        }
 
         @media (max-width: 768px) {
             .controls {
@@ -468,6 +499,7 @@
             .control-group {
                 width: 100%;
             }
+
 
             .hero h1 {
                 font-size: 2rem;
@@ -480,16 +512,6 @@
         }
     </style>
     
-    <script>
-        // Check if we're coming from homepage and add class immediately
-        const urlParams = new URLSearchParams(window.location.search);
-        const fromHomepage = urlParams.get('fromHomepage') === 'true';
-        
-        if (fromHomepage) {
-            // Add class to document element immediately before body renders
-            document.documentElement.classList.add('from-homepage');
-        }
-    </script>
 </head>
 
 <body>
@@ -512,7 +534,17 @@
             <div class="controls">
                 <div class="control-group">
                     <label>Current Price ($)</label>
-                    <input type="number" id="currentPrice" value="115000" min="1000" step="1000">
+                    <div class="price-input-container">
+                        <input type="number" id="currentPrice" value="115000" min="1000" step="1000">
+                        <div class="price-loading" id="priceLoading" style="display: none;">
+                            <span class="price-spinner">⟳</span>
+                            <span class="loading-text">Fetching live price...</span>
+                        </div>
+                    </div>
+                    <div class="price-info" id="priceInfo" style="display: none;">
+                        <span class="price-source"></span>
+                        <span class="price-timestamp"></span>
+                    </div>
                 </div>
                 <div class="control-group">
                     <label>Annual Volatility (%)</label>
@@ -545,13 +577,13 @@
                 <div class="loading-subtext">Computing probability distributions across multiple time horizons...</div>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" style="display: none;">
                 <canvas id="priceChart"></canvas>
             </div>
 
-            <div class="stats-grid" id="statsGrid"></div>
+            <div class="stats-grid" id="statsGrid" style="display: none;"></div>
 
-            <div class="probability-table">
+            <div class="probability-table" style="display: none;">
                 <h3>Probability of Reaching Price Milestones</h3>
                 <table id="probabilityTable">
                     <thead>
@@ -576,7 +608,91 @@
     <script>
         let chart = null;
         
-        // fromHomepage is already detected in the head script
+        // Fetch current Bitcoin price from multiple APIs with fallback
+        async function fetchCurrentBitcoinPrice() {
+            const apis = [
+                {
+                    name: 'CoinGecko',
+                    url: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
+                    parser: (data) => data.bitcoin.usd
+                },
+                {
+                    name: 'CoinCap',
+                    url: 'https://api.coincap.io/v2/assets/bitcoin',
+                    parser: (data) => parseFloat(data.data.priceUsd)
+                },
+                {
+                    name: 'Binance',
+                    url: 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
+                    parser: (data) => parseFloat(data.price)
+                }
+            ];
+
+            for (const api of apis) {
+                try {
+                    console.log(`Fetching Bitcoin price from ${api.name}...`);
+                    const response = await fetch(api.url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    const price = api.parser(data);
+                    
+                    if (typeof price === 'number' && price > 0) {
+                        console.log(`✓ Successfully fetched price from ${api.name}: $${price.toLocaleString()}`);
+                        return Math.round(price);
+                    } else {
+                        throw new Error('Invalid price data received');
+                    }
+                } catch (error) {
+                    console.warn(`⚠ ${api.name} API failed:`, error.message);
+                    continue;
+                }
+            }
+            
+            // If all APIs fail, return current default value
+            console.error('❌ All price APIs failed, using default value');
+            return 115000;
+        }
+
+        // Load current Bitcoin price automatically on page load
+        async function loadCurrentPrice() {
+            const input = document.getElementById('currentPrice');
+            const priceInfo = document.getElementById('priceInfo');
+            const priceLoading = document.getElementById('priceLoading');
+            
+            // Show loading state
+            priceLoading.style.display = 'flex';
+            input.style.paddingRight = '160px'; // Make room for loading indicator
+            
+            try {
+                const price = await fetchCurrentBitcoinPrice();
+                
+                // Update input value
+                input.value = price;
+                
+                // Show success info
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                });
+                
+            } catch (error) {
+                console.error('Error loading price:', error);
+                
+                // Show fallback info
+                priceInfo.querySelector('.price-source').textContent = 'Using default price';
+                priceInfo.querySelector('.price-timestamp').textContent = 'Failed to fetch live price';
+                priceInfo.style.display = 'flex';
+            } finally {
+                // Hide loading state
+                priceLoading.style.display = 'none';
+                input.style.paddingRight = '16px'; // Reset padding
+            }
+        }
 
         // Box-Muller transform for normal distribution
         function randomNormal() {
@@ -633,11 +749,9 @@
         async function runSimulation() {
             const loading = document.getElementById('loading');
             
-            // Only show loading if not already visible (from homepage)
-            if (loading.style.display !== 'flex') {
-                loading.style.display = 'flex';
-                loading.style.opacity = '1';
-            }
+            // Always show loading animation
+            loading.style.display = 'flex';
+            loading.style.opacity = '1';
 
             // Get parameters
             const currentPrice = parseFloat(document.getElementById('currentPrice').value);
@@ -648,8 +762,8 @@
             // Time horizons
             const timeHorizons = [4, 5, 6, 8, 10, 12, 15];
 
-            // Allow UI to update
-            await new Promise(resolve => setTimeout(resolve, 10));
+            // Allow UI to update and ensure loading animation is visible for meaningful time
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             // Run simulations
             const results = {};
@@ -702,18 +816,22 @@
 
             updateProbabilityTable(probabilities);
 
+            // Ensure loading animation is visible for minimum duration before hiding
+            const minLoadingTime = 800; // Show for at least 800ms
+            await new Promise(resolve => setTimeout(resolve, minLoadingTime));
+
+            // Show results sections
+            document.querySelector('.chart-container').style.display = 'block';
+            document.getElementById('statsGrid').style.display = 'grid';
+            document.querySelector('.probability-table').style.display = 'block';
+
             // Smooth fade-out animation and show main content if coming from homepage
             loading.style.opacity = '0';
             setTimeout(() => {
                 loading.style.display = 'none';
-                // Check if we came from homepage and clean up
+                // Clean up URL parameters if coming from homepage
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('fromHomepage') === 'true') {
-                    // Remove the class to show main content
-                    document.documentElement.classList.remove('from-homepage');
-                    const main = document.querySelector('main');
-                    main.style.visibility = 'visible';
-                    // Clean up URL by removing the fromHomepage parameter
                     const newUrl = window.location.href.split('?')[0];
                     window.history.replaceState({}, document.title, newUrl);
                 }
@@ -1017,8 +1135,8 @@
             observer.observe(element);
         });
 
-        // Initialize theme and run simulation
-        function initializeApp() {
+        // Initialize theme and load current price
+        async function initializeApp() {
             // Ensure theme is applied
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
@@ -1032,10 +1150,8 @@
             // Force a reflow to ensure CSS variables are applied
             body.offsetHeight;
             
-            // Run initial simulation after theme is set and styles are computed
-            setTimeout(() => {
-                runSimulation();
-            }, 200);
+            // Load current Bitcoin price
+            await loadCurrentPrice();
         }
 
         // Run initial simulation
