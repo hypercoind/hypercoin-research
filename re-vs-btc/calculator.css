@@ -1,0 +1,459 @@
+/* Real Estate vs Bitcoin Calculator Specific Styles */
+
+/* Calculator input sections */
+.inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 3rem;
+}
+
+.common-inputs {
+    grid-column: 1 / -1;
+}
+
+
+.controls,
+.real-estate-inputs,
+.portfolio-inputs,
+.rent-inputs,
+.common-inputs {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.controls::before,
+.real-estate-inputs::before,
+.portfolio-inputs::before,
+.rent-inputs::before,
+.common-inputs::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        var(--gradient-start),
+        var(--gradient-end)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.controls::hover::before,
+.real-estate-inputs:hover::before,
+.portfolio-inputs:hover::before,
+.rent-inputs:hover::before,
+.common-inputs:hover::before {
+    opacity: 1;
+}
+
+.controls:hover,
+.real-estate-inputs:hover,
+.portfolio-inputs:hover,
+.rent-inputs:hover,
+.common-inputs:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-orange);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.real-estate-inputs h2,
+.portfolio-inputs h2,
+.rent-inputs h2,
+.common-inputs h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.allocation-inputs h3 {
+    color: var(--primary-orange);
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* Calculator-specific input styling */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Time horizon group with reset button */
+.time-horizon-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.time-horizon-group .input-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.reset-btn {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reset-btn:hover {
+    border-color: var(--primary-orange);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+/* Calculate button styling */
+#calculate-btn {
+    background: linear-gradient(45deg, var(--primary-orange), #e6841a);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    display: block;
+    margin: 2rem auto;
+    min-width: 200px;
+}
+
+#calculate-btn:hover {
+    background: linear-gradient(45deg, #e6841a, var(--primary-orange));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(247, 147, 26, 0.4);
+}
+
+[data-theme="light"] #calculate-btn {
+    background: linear-gradient(45deg, var(--primary-orange), #d17316);
+    color: white;
+    box-shadow: 0 2px 4px rgba(247, 147, 26, 0.3);
+}
+
+[data-theme="light"] #calculate-btn:hover {
+    background: linear-gradient(45deg, #d17316, var(--primary-orange));
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.5);
+}
+
+/* Results section styling */
+.results-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    transition: all 0.3s ease;
+}
+
+.results-section:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-orange);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.results-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--bitcoin-orange);
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.results-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent-gold);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-orange);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.result-card:hover::before {
+    opacity: 1;
+}
+
+.result-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.result-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.result-item .label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.result-item .value {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+}
+
+/* Comparison summary */
+.comparison-summary {
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.1), rgba(255, 107, 53, 0.05));
+    border: 2px solid var(--primary-orange);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.comparison-summary h3 {
+    color: var(--primary-orange);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.comparison-summary p {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* Payment details styling */
+.payment-details {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.payment-details h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.payment-details .result-item {
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0;
+}
+
+.payment-details .result-item:last-child {
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--primary-orange);
+    font-weight: 700;
+}
+
+/* Calculating state */
+.calculating {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.calculating .btn {
+    background: var(--text-secondary) !important;
+    cursor: not-allowed !important;
+}
+
+/* Animation classes */
+.result-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.result-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.result-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-card {
+    animation: slideInUp 0.6s ease forwards;
+}
+
+.results-section.animating .result-card:not(.animate-card) {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.results-section.animating .comparison-summary:not(.animate-fade-in) {
+    opacity: 0;
+}
+
+.results-section.animating .chart-container:not(.animate-in) {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Re-vs-btc page specific header overrides */
+.container header {
+    position: static;
+    padding: 3rem 0;
+    border-bottom: none;
+    backdrop-filter: none;
+}
+
+/* Mobile responsiveness for calculator */
+@media (max-width: 768px) {
+    .inputs-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .real-estate-inputs,
+    .portfolio-inputs,
+    .rent-inputs,
+    .results-section {
+        padding: 1.5rem;
+    }
+
+    .result-card {
+        padding: 1.5rem;
+    }
+
+    .results-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .result-item .value {
+        font-size: 1.1rem;
+    }
+
+    .time-horizon-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .reset-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

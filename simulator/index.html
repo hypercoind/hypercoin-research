@@ -5,524 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitcoin Monte Carlo Simulator - Hypercoin Research</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.coingecko.com https://api.coincap.io https://api.binance.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js" 
+            integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
+      crossorigin="anonymous"
     />
     
-    <style>
-        :root {
-            --primary-orange: #f7931a;
-            --dark-bg: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
-            --text-primary: #f0f6fc;
-            --text-secondary: #8b949e;
-            --accent-blue: #58a6ff;
-            --success-green: #238636;
-            --gradient-start: #f7931a;
-            --gradient-end: #ff6b35;
-            --accent-gold: #ffd700;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        [data-theme="light"] {
-            --dark-bg: #ffffff;
-            --card-bg: #f8f9fa;
-            --border-color: #e0e0e0;
-            --text-primary: #1a1a1a;
-            --text-secondary: #333333;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-              sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        header {
-            padding: 2rem 0;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: "JetBrains Mono", monospace;
-            font-size: 1.8rem;
-            font-weight: 600;
-            background: linear-gradient(
-              135deg,
-              var(--gradient-start),
-              var(--gradient-end)
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-decoration: none;
-            display: flex;
-            cursor: pointer;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: 2px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            border-color: var(--primary-orange);
-            color: var(--primary-orange);
-            transform: translateY(-1px);
-        }
-
-
-        .hero {
-            padding: 5rem 0;
-            text-align: center;
-            position: relative;
-            margin-bottom: 3rem;
-        }
-        
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(
-              circle,
-              rgba(247, 147, 26, 0.1) 0%,
-              transparent 70%
-            );
-            border-radius: 50%;
-            z-index: -1;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(
-              135deg,
-              var(--text-primary),
-              var(--primary-orange)
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .disclaimer-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-gold);
-            border-radius: 12px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-        }
-
-        .disclaimer-section p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .disclaimer-section strong {
-            color: var(--accent-gold);
-        }
-
-        .controls {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .controls:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary-orange);
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .control-group label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        select,
-        input {
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        select:focus,
-        input:focus {
-            outline: none;
-            border-color: var(--primary-orange);
-            box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .price-input-container {
-            position: relative;
-        }
-
-        .price-loading {
-            position: absolute;
-            top: 50%;
-            right: 12px;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .price-spinner {
-            animation: spin 1s linear infinite;
-            font-size: 14px;
-            color: var(--primary-orange);
-        }
-
-        .loading-text {
-            font-weight: 500;
-        }
-
-        .price-info {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .price-source {
-            font-weight: 500;
-            color: var(--primary-orange);
-        }
-
-        .run-simulation-btn {
-            background: linear-gradient(
-              135deg,
-              var(--gradient-start),
-              var(--gradient-end)
-            );
-            color: white;
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .run-simulation-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(247, 147, 26, 0.3);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 600px;
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .chart-container:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary-orange);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(
-              90deg,
-              var(--gradient-start),
-              var(--gradient-end)
-            );
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-orange);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-card h3 {
-            color: var(--bitcoin-orange);
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .stat-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .stat-value {
-            color: var(--bitcoin-orange);
-            font-weight: 600;
-        }
-
-        .probability-table {
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 12px;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-        }
-
-        .probability-table h3 {
-            color: var(--bitcoin-orange);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 15px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            color: var(--bitcoin-orange);
-            font-weight: 600;
-            background: rgba(247, 147, 26, 0.1);
-        }
-
-        .milestone {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .prob-high {
-            color: #00ff88;
-            font-weight: 600;
-        }
-
-        .prob-medium {
-            color: var(--accent-gold);
-            font-weight: 600;
-        }
-
-        .prob-low {
-            color: #ff6b6b;
-            font-weight: 600;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--dark-bg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease;
-        }
-
-        .loading-spinner {
-            width: 80px;
-            height: 80px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--primary-orange);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 2rem;
-            box-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
-        }
-
-        .loading-text {
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .loading-subtext {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-align: center;
-            max-width: 300px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-
-        @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .control-group {
-                width: 100%;
-            }
-
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .chart-container {
-                padding: 20px;
-                height: 500px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="simulator.css">
     
 </head>
 
-<body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="../index.html" class="logo">hypercoin.info</a>
-                <button class="theme-toggle" id="theme-toggle">☀️ Light</button>
-            </div>
+<body class="simulator">
+    <div class="site-header">
+        <div class="site-header-content">
+            <a href="../index.html" class="site-logo">hypercoin.info</a>
+            <button class="theme-toggle" id="theme-toggle">☀️ Light</button>
         </div>
-    </header>
+    </div>
 
     <main>
         <div class="container">
@@ -600,7 +115,7 @@
             </div>
             
             <div class="disclaimer-section">
-                <p><strong>⚠️ Disclaimer:</strong> This tool provides educational simulations based on historical data. Results are not investment advice and do not guarantee future performance. Bitcoin is highly volatile - consult professionals before making investment decisions.</p>
+                <p><strong>⚠️ Disclaimer:</strong> This tool provides educational simulations based on statistical analysis. Results are not investment advice and do not guarantee future performance.</p>
             </div>
         </div>
     </main>
@@ -608,52 +123,133 @@
     <script>
         let chart = null;
         
-        // Fetch current Bitcoin price from multiple APIs with fallback
+        // Enhanced secure API fetch with timeout and validation
+        async function secureApiFetch(url, timeoutMs = 5000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            
+            try {
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'User-Agent': 'HypercoinResearch/1.0'
+                    },
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer'
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                // Validate content type
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Invalid response content type');
+                }
+                
+                // Limit response size to prevent memory attacks
+                const contentLength = response.headers.get('content-length');
+                if (contentLength && parseInt(contentLength) > 10000) { // 10KB limit
+                    throw new Error('Response too large');
+                }
+                
+                const data = await response.json();
+                
+                // Basic data structure validation
+                if (typeof data !== 'object' || data === null) {
+                    throw new Error('Invalid JSON response structure');
+                }
+                
+                return data;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timeout');
+                }
+                throw error;
+            }
+        }
+
+        // Validate and sanitize price data
+        function validatePriceData(price, apiName) {
+            if (typeof price !== 'number' || isNaN(price)) {
+                throw new Error(`Invalid price type from ${apiName}`);
+            }
+            
+            if (price <= 0) {
+                throw new Error(`Invalid price value from ${apiName}: ${price}`);
+            }
+            
+            // Reasonable bounds check for Bitcoin price
+            if (price < 1000 || price > 10000000) {
+                throw new Error(`Price out of reasonable range from ${apiName}: ${price}`);
+            }
+            
+            return Math.round(price);
+        }
+
+        // Fetch current Bitcoin price from multiple APIs with enhanced security
         async function fetchCurrentBitcoinPrice() {
             const apis = [
                 {
                     name: 'CoinGecko',
                     url: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
-                    parser: (data) => data.bitcoin.usd
+                    parser: (data) => {
+                        if (!data.bitcoin || typeof data.bitcoin.usd !== 'number') {
+                            throw new Error('Invalid CoinGecko response structure');
+                        }
+                        return data.bitcoin.usd;
+                    }
                 },
                 {
                     name: 'CoinCap',
                     url: 'https://api.coincap.io/v2/assets/bitcoin',
-                    parser: (data) => parseFloat(data.data.priceUsd)
+                    parser: (data) => {
+                        if (!data.data || typeof data.data.priceUsd !== 'string') {
+                            throw new Error('Invalid CoinCap response structure');
+                        }
+                        return parseFloat(data.data.priceUsd);
+                    }
                 },
                 {
                     name: 'Binance',
                     url: 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
-                    parser: (data) => parseFloat(data.price)
+                    parser: (data) => {
+                        if (typeof data.price !== 'string') {
+                            throw new Error('Invalid Binance response structure');
+                        }
+                        return parseFloat(data.price);
+                    }
                 }
             ];
 
+            const attempts = [];
+            
             for (const api of apis) {
                 try {
                     console.log(`Fetching Bitcoin price from ${api.name}...`);
-                    const response = await fetch(api.url);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const data = await response.json();
+                    const data = await secureApiFetch(api.url, 3000); // 3 second timeout
                     const price = api.parser(data);
+                    const validatedPrice = validatePriceData(price, api.name);
                     
-                    if (typeof price === 'number' && price > 0) {
-                        console.log(`✓ Successfully fetched price from ${api.name}: $${price.toLocaleString()}`);
-                        return Math.round(price);
-                    } else {
-                        throw new Error('Invalid price data received');
-                    }
+                    console.log(`✓ Successfully fetched price from ${api.name}: $${validatedPrice.toLocaleString()}`);
+                    return validatedPrice;
                 } catch (error) {
                     console.warn(`⚠ ${api.name} API failed:`, error.message);
+                    attempts.push({ api: api.name, error: error.message });
                     continue;
                 }
             }
             
-            // If all APIs fail, return current default value
-            console.error('❌ All price APIs failed, using default value');
+            // If all APIs fail, log details and return default value
+            console.error('❌ All price APIs failed:', attempts);
+            console.warn('Using default Bitcoin price of $115,000');
             return 115000;
         }
 
@@ -745,6 +341,72 @@
             };
         }
 
+        // Input validation functions
+        function validateNumericInput(inputId, min, max, defaultValue) {
+            const element = document.getElementById(inputId);
+            if (!element) return defaultValue;
+            
+            let value = parseFloat(element.value);
+            
+            // Handle invalid input
+            if (isNaN(value) || value === null || value === undefined) {
+                value = defaultValue;
+                element.value = defaultValue;
+                showValidationError(element, `Invalid input, reset to ${defaultValue}`);
+            }
+            
+            // Clamp to valid range
+            if (value < min) {
+                value = min;
+                element.value = min;
+                showValidationError(element, `Minimum value is ${min}`);
+            } else if (value > max) {
+                value = max;
+                element.value = max;
+                showValidationError(element, `Maximum value is ${max}`);
+            }
+            
+            return value;
+        }
+
+        function showValidationError(element, message) {
+            element.style.borderColor = '#e74c3c';
+            element.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+                element.style.borderColor = '';
+                element.style.backgroundColor = '';
+            }, 2000);
+            
+            console.warn(`Validation: ${message}`);
+        }
+
+        // Add input validation to all numeric inputs
+        function initializeInputValidation() {
+            const inputs = [
+                { id: 'currentPrice', min: 1000, max: 10000000 },
+                { id: 'volatility', min: 10, max: 200 },
+                { id: 'numSims', min: 100, max: 50000 }
+            ];
+
+            inputs.forEach(input => {
+                const element = document.getElementById(input.id);
+                if (element) {
+                    // Prevent non-numeric input
+                    element.addEventListener('keydown', (e) => {
+                        const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+                        const isNumberKey = (e.key >= '0' && e.key <= '9');
+                        const isDecimalKey = e.key === '.' && !element.value.includes('.') && input.id !== 'numSims'; // No decimals for numSims
+                        
+                        if (!allowedKeys.includes(e.key) && !isNumberKey && !isDecimalKey && !e.ctrlKey) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+            });
+        }
+
         // Run the simulation
         async function runSimulation() {
             const loading = document.getElementById('loading');
@@ -753,11 +415,11 @@
             loading.style.display = 'flex';
             loading.style.opacity = '1';
 
-            // Get parameters
-            const currentPrice = parseFloat(document.getElementById('currentPrice').value);
-            const volatility = parseFloat(document.getElementById('volatility').value) / 100;
+            // Get and validate parameters
+            const currentPrice = validateNumericInput('currentPrice', 1000, 10000000, 115000);
+            const volatility = validateNumericInput('volatility', 10, 200, 42) / 100;
             const annualReturn = parseFloat(document.getElementById('scenario').value);
-            const numSims = parseInt(document.getElementById('numSims').value);
+            const numSims = Math.floor(validateNumericInput('numSims', 100, 50000, 5000));
 
             // Time horizons
             const timeHorizons = [4, 5, 6, 8, 10, 12, 15];
@@ -834,6 +496,16 @@
                 if (urlParams.get('fromHomepage') === 'true') {
                     const newUrl = window.location.href.split('?')[0];
                     window.history.replaceState({}, document.title, newUrl);
+                }
+                // Smoothly scroll to center the chart view
+                const chartContainer = document.querySelector('.chart-container');
+                if (chartContainer) {
+                    setTimeout(() => {
+                        chartContainer.scrollIntoView({ 
+                            behavior: "smooth",
+                            block: "nearest"
+                        });
+                    });
                 }
             }, 300);
         }
@@ -983,10 +655,32 @@
             });
         }
 
+        // Secure function to create stat row
+        function createStatRow(label, value) {
+            const row = document.createElement('div');
+            row.className = 'stat-row';
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'stat-label';
+            labelSpan.textContent = label;
+            
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'stat-value';
+            valueSpan.textContent = value;
+            
+            row.appendChild(labelSpan);
+            row.appendChild(valueSpan);
+            
+            return row;
+        }
+
         // Update statistics
         function updateStats(results) {
             const statsGrid = document.getElementById('statsGrid');
-            statsGrid.innerHTML = '';
+            // Clear existing content safely
+            while (statsGrid.firstChild) {
+                statsGrid.removeChild(statsGrid.firstChild);
+            }
 
             const selectedYears = [5, 10, 15];
 
@@ -995,38 +689,39 @@
                 const card = document.createElement('div');
                 card.className = 'stat-card';
 
-                card.innerHTML = `
-                    <h3>${years} Year Projection</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">Median</span>
-                        <span class="stat-value">${formatPrice(stats.median)}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Mean</span>
-                        <span class="stat-value">${formatPrice(stats.mean)}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">10th - 90th Percentile</span>
-                        <span class="stat-value">${formatPrice(stats.percentile_10)} - ${formatPrice(stats.percentile_90)}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">25th - 75th Percentile</span>
-                        <span class="stat-value">${formatPrice(stats.percentile_25)} - ${formatPrice(stats.percentile_75)}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Min - Max</span>
-                        <span class="stat-value">${formatPrice(stats.min)} - ${formatPrice(stats.max)}</span>
-                    </div>
-                `;
+                // Create header
+                const header = document.createElement('h3');
+                header.textContent = `${years} Year Projection`;
+                card.appendChild(header);
+
+                // Create stat rows securely
+                card.appendChild(createStatRow('Median', formatPrice(stats.median)));
+                card.appendChild(createStatRow('Mean', formatPrice(stats.mean)));
+                card.appendChild(createStatRow('10th - 90th Percentile', `${formatPrice(stats.percentile_10)} - ${formatPrice(stats.percentile_90)}`));
+                card.appendChild(createStatRow('25th - 75th Percentile', `${formatPrice(stats.percentile_25)} - ${formatPrice(stats.percentile_75)}`));
+                card.appendChild(createStatRow('Min - Max', `${formatPrice(stats.min)} - ${formatPrice(stats.max)}`));
 
                 statsGrid.appendChild(card);
             }
         }
 
+        // Secure function to create table cell
+        function createTableCell(content, className = '') {
+            const cell = document.createElement('td');
+            if (className) {
+                cell.className = className;
+            }
+            cell.textContent = content;
+            return cell;
+        }
+
         // Update probability table
         function updateProbabilityTable(probabilities) {
             const tbody = document.getElementById('probabilityBody');
-            tbody.innerHTML = '';
+            // Clear existing content safely
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
 
             for (const [milestone, probs] of Object.entries(probabilities)) {
                 const row = document.createElement('tr');
@@ -1037,13 +732,12 @@
                     return 'prob-low';
                 };
 
-                row.innerHTML = `
-                    <td class="milestone">${formatPrice(parseFloat(milestone))}</td>
-                    <td class="${getColorClass(probs[5])}">${probs[5].toFixed(1)}%</td>
-                    <td class="${getColorClass(probs[10])}">${probs[10].toFixed(1)}%</td>
-                    <td class="${getColorClass(probs[15])}">${probs[15].toFixed(1)}%</td>
-                    <td class="${getColorClass(probs[20])}">${probs[20].toFixed(1)}%</td>
-                `;
+                // Create cells securely
+                row.appendChild(createTableCell(formatPrice(parseFloat(milestone)), 'milestone'));
+                row.appendChild(createTableCell(`${probs[5].toFixed(1)}%`, getColorClass(probs[5])));
+                row.appendChild(createTableCell(`${probs[10].toFixed(1)}%`, getColorClass(probs[10])));
+                row.appendChild(createTableCell(`${probs[15].toFixed(1)}%`, getColorClass(probs[15])));
+                row.appendChild(createTableCell(`${probs[20].toFixed(1)}%`, getColorClass(probs[20])));
 
                 tbody.appendChild(row);
             }
@@ -1053,18 +747,23 @@
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
 
+        // Secure theme toggle function
+        function setThemeToggleText(theme) {
+            themeToggle.textContent = theme === 'light' ? '🌙 Dark' : '☀️ Light';
+        }
+
         // Theme toggle functionality
         themeToggle.addEventListener('click', function () {
             const currentTheme = body.getAttribute('data-theme');
 
             if (currentTheme === 'light') {
                 body.setAttribute('data-theme', 'dark');
-                themeToggle.innerHTML = '☀️ Light';
-                localStorage.setItem('theme', 'dark');
+                setThemeToggleText('dark');
+                setSecureTheme('dark');
             } else {
                 body.setAttribute('data-theme', 'light');
-                themeToggle.innerHTML = '🌙 Dark';
-                localStorage.setItem('theme', 'light');
+                setThemeToggleText('light');
+                setSecureTheme('light');
             }
             
             // Update chart colors if chart exists
@@ -1135,20 +834,55 @@
             observer.observe(element);
         });
 
+        // Secure localStorage for simulator
+        function getSecureTheme() {
+            try {
+                const theme = localStorage.getItem('theme');
+                if (theme && ['light', 'dark'].includes(theme)) {
+                    return theme;
+                }
+                if (theme) {
+                    console.warn('Invalid theme value found, removing');
+                    localStorage.removeItem('theme');
+                }
+                return null;
+            } catch (error) {
+                console.error('localStorage read error:', error.message);
+                return null;
+            }
+        }
+
+        function setSecureTheme(theme) {
+            if (!['light', 'dark'].includes(theme)) {
+                console.warn('Invalid theme value:', theme);
+                return false;
+            }
+            try {
+                localStorage.setItem('theme', theme);
+                return true;
+            } catch (error) {
+                console.error('localStorage write error:', error.message);
+                return false;
+            }
+        }
+
         // Initialize theme and load current price
         async function initializeApp() {
-            // Ensure theme is applied
-            const savedTheme = localStorage.getItem('theme');
+            // Ensure theme is applied securely
+            const savedTheme = getSecureTheme();
             if (savedTheme === 'light') {
                 body.setAttribute('data-theme', 'light');
-                themeToggle.innerHTML = '🌙 Dark';
+                setThemeToggleText('light');
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeToggle.innerHTML = '☀️ Light';
+                setThemeToggleText('dark');
             }
             
             // Force a reflow to ensure CSS variables are applied
             body.offsetHeight;
+            
+            // Initialize input validation
+            initializeInputValidation();
             
             // Load current Bitcoin price
             await loadCurrentPrice();

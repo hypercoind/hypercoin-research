@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Estate vs Portfolio Investment Comparison</title>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    
     <link rel="icon" type="image/jpeg" href="../images/hypercoin-info-logo.jpg">
     <link rel="apple-touch-icon" href="../images/hypercoin-info-logo.jpg">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="calculator.css">
 </head>
 <body>
     <div class="site-header">
@@ -100,16 +110,18 @@
 
             <div class="common-inputs">
                 <h2>Analysis Parameters</h2>
-                <div class="input-group">
-                    <label for="time-horizon">Time Horizon (years)</label>
-                    <input type="number" id="time-horizon" value="10" min="1" max="50">
+                <div class="time-horizon-group">
+                    <div class="input-group">
+                        <label for="time-horizon">Time Horizon (years)</label>
+                        <input type="number" id="time-horizon" value="10" min="1" max="50">
+                    </div>
+                    <button id="reset-btn" class="reset-btn">Reset to Defaults</button>
                 </div>
             </div>
         </div>
 
         <div class="controls">
             <button id="calculate-btn">Calculate & Compare</button>
-            <button id="reset-btn">Reset to Defaults</button>
         </div>
 
         <div class="results-section" id="results" style="display: none;">
@@ -142,7 +154,7 @@
                         <span class="value" id="re-monthly-payment">$0</span>
                     </div>
                     
-                    <button class="expand-details-btn" onclick="togglePaymentDetails()">📊 View Payment Breakdown</button>
+                    <button class="expand-details-btn" onclick="togglePaymentDetails()">View Payment Breakdown</button>
                     
                     <div class="payment-details" id="payment-details" style="display: none;">
                         <div class="result-item">
@@ -239,70 +251,66 @@
             </div>
         </div>
 
-        <div class="help-section">
-            <h2>📚 About This Calculator</h2>
-            
-            <div class="help-content">
-                <div class="overview-card">
-                    <h3>🎯 What It Does</h3>
-                    <p>Compare three wealth-building strategies: <strong>real estate ownership</strong>, <strong>diversified investing</strong>, and <strong>Bitcoin savings</strong> (using rent vs. mortgage savings).</p>
-                </div>
-
-                <div class="instructions-card">
-                    <h3>⚙️ Quick Start</h3>
-                    <ol>
-                        <li>Adjust property price and down payment</li>
-                        <li>Set portfolio allocation (must total 100%)</li>
-                        <li>Enter your current rent</li>
-                        <li>Choose time horizon and calculate</li>
-                    </ol>
-                </div>
-
-                <div class="assumptions-card">
-                    <h3>📊 Key Assumptions</h3>
-                    <div class="assumptions-grid">
-                        <div class="assumption-item">
-                            <strong>Property:</strong> 4% annual appreciation, 2% maintenance costs
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Taxes:</strong> Not included - consult a tax professional
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Bitcoin:</strong> Modeled with decreasing volatility over time
-                        </div>
-                        <div class="assumption-item">
-                            <strong>Portfolio:</strong> Based on historical asset performance
-                        </div>
-                    </div>
-                </div>
-
-                <div class="disclaimer-card">
-                    <h3>⚠️ Disclaimer</h3>
-                    <p><strong>Educational tool only.</strong> Results are projections, not guarantees. Real estate offers stability and tax benefits not captured here. Bitcoin is volatile. Consider your personal situation and consult professionals for major decisions.</p>
-                </div>
-            </div>
+        <div class="disclaimer-section">
+            <h3>⚠️ Disclaimer</h3>
+            <p><strong> Educational tool only. </strong> Not financial advice. </p>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js" 
+            integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w==" 
+            crossorigin="anonymous" 
+            referrerpolicy="no-referrer"></script>
     <script>
         // Theme Management - Initialize on page load
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         
-        // Function to apply theme
+        // Function to apply theme securely
         function applyTheme(theme) {
             if (theme === 'light') {
                 body.setAttribute('data-theme', 'light');
-                themeToggle.innerHTML = '🌙 Dark';
+                themeToggle.textContent = '🌙 Dark';
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeToggle.innerHTML = '☀️ Light';
+                themeToggle.textContent = '☀️ Light';
             }
         }
         
+        // Secure localStorage for theme validation
+        function getSecureTheme() {
+            try {
+                const theme = localStorage.getItem('theme');
+                if (theme && ['light', 'dark'].includes(theme)) {
+                    return theme;
+                }
+                if (theme) {
+                    console.warn('Invalid theme value, removing');
+                    localStorage.removeItem('theme');
+                }
+                return null;
+            } catch (error) {
+                console.error('localStorage access error:', error.message);
+                return null;
+            }
+        }
+
+        function setSecureTheme(theme) {
+            if (!['light', 'dark'].includes(theme)) {
+                console.warn('Invalid theme value:', theme);
+                return false;
+            }
+            try {
+                localStorage.setItem('theme', theme);
+                return true;
+            } catch (error) {
+                console.error('localStorage write error:', error.message);
+                return false;
+            }
+        }
+
         // Check for saved theme preference or default to dark mode
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = getSecureTheme();
         if (savedTheme) {
             applyTheme(savedTheme);
         } else {
@@ -315,10 +323,10 @@
             
             if (currentTheme === 'light') {
                 applyTheme('dark');
-                localStorage.setItem('theme', 'dark');
+                setSecureTheme('dark');
             } else {
                 applyTheme('light');
-                localStorage.setItem('theme', 'light');
+                setSecureTheme('light');
             }
             
             // Update chart colors if calculator is loaded and chart exists
@@ -345,25 +353,25 @@
             
             if (details.style.display === 'none' || details.style.display === '') {
                 details.style.display = 'block';
-                button.innerHTML = '📊 Hide Payment Breakdown';
+                button.textContent = 'Hide Payment Breakdown';
             } else {
                 details.style.display = 'none';
-                button.innerHTML = '📊 View Payment Breakdown';
+                button.textContent = 'View Payment Breakdown';
             }
         }
         
         // Make function globally accessible
         window.togglePaymentDetails = togglePaymentDetails;
 
-        // Add scroll effect to header (like hypercoin-development)
+        // Add scroll effect to site header (navigation bar)
         window.addEventListener("scroll", () => {
-            const header = document.querySelector(".site-header");
+            const siteHeader = document.querySelector(".site-header");
             if (window.scrollY > 100) {
-                header.style.background = "rgba(13, 17, 23, 0.95)";
-                header.style.backdropFilter = "blur(10px)";
+                siteHeader.style.background = "rgba(13, 17, 23, 0.95)";
+                siteHeader.style.backdropFilter = "blur(10px)";
             } else {
-                header.style.background = "transparent";
-                header.style.backdropFilter = "blur(10px)";
+                siteHeader.style.background = "transparent";
+                siteHeader.style.backdropFilter = "blur(10px)";
             }
         });
 

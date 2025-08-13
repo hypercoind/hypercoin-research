@@ -2,6 +2,8 @@ class InvestmentCalculator {
     constructor() {
         this.initializeEventListeners();
         this.chart = null;
+        // Initialize input validation
+        this.initializeInputValidation();
         // Validate allocations on page load
         setTimeout(() => this.validateAllocations(), 100);
     }
@@ -17,11 +19,11 @@ class InvestmentCalculator {
     }
 
     validateAllocations() {
-        const btc = parseFloat(document.getElementById('btc-allocation').value) || 0;
-        const voo = parseFloat(document.getElementById('voo-allocation').value) || 0;
-        const treasury = parseFloat(document.getElementById('treasury-allocation').value) || 0;
-        const strc = parseFloat(document.getElementById('strc-allocation').value) || 0;
-        const hysa = parseFloat(document.getElementById('hysa-allocation').value) || 0;
+        const btc = this.validateAndClampInput('btc-allocation', 0, 100, 20);
+        const voo = this.validateAndClampInput('voo-allocation', 0, 100, 20);
+        const treasury = this.validateAndClampInput('treasury-allocation', 0, 100, 20);
+        const strc = this.validateAndClampInput('strc-allocation', 0, 100, 20);
+        const hysa = this.validateAndClampInput('hysa-allocation', 0, 100, 20);
         
         const total = btc + voo + treasury + strc + hysa;
         const calculateBtn = document.getElementById('calculate-btn');
@@ -37,15 +39,143 @@ class InvestmentCalculator {
         }
     }
 
+    // Comprehensive input validation system
+    initializeInputValidation() {
+        const inputValidationRules = {
+            'property-price': { min: 50000, max: 50000000, default: 435000, type: 'currency' },
+            'down-payment': { min: 1000, max: 10000000, default: 87000, type: 'currency' },
+            'interest-rate': { min: 0.1, max: 30, default: 6.7, type: 'percentage' },
+            'rental-yield': { min: 0, max: 20, default: 0, type: 'percentage' },
+            'property-appreciation': { min: -10, max: 20, default: 4, type: 'percentage' },
+            'maintenance-costs': { min: 0, max: 10, default: 2, type: 'percentage' },
+            'hoa-fee': { min: 0, max: 5000, default: 0, type: 'currency' },
+            'initial-investment': { min: 1000, max: 10000000, default: 87000, type: 'currency' },
+            'btc-allocation': { min: 0, max: 100, default: 20, type: 'percentage' },
+            'voo-allocation': { min: 0, max: 100, default: 20, type: 'percentage' },
+            'treasury-allocation': { min: 0, max: 100, default: 20, type: 'percentage' },
+            'strc-allocation': { min: 0, max: 100, default: 20, type: 'percentage' },
+            'hysa-allocation': { min: 0, max: 100, default: 20, type: 'percentage' },
+            'current-rent': { min: 100, max: 20000, default: 2075, type: 'currency' },
+            'rent-inflation': { min: 0, max: 15, default: 3.5, type: 'percentage' },
+            'time-horizon': { min: 1, max: 50, default: 10, type: 'integer' }
+        };
+
+        // Add validation to all inputs
+        Object.keys(inputValidationRules).forEach(inputId => {
+            const element = document.getElementById(inputId);
+            if (element) {
+                this.addInputValidation(element, inputValidationRules[inputId]);
+            }
+        });
+    }
+
+    addInputValidation(element, rules) {
+        // Prevent non-numeric input
+        element.addEventListener('keydown', (e) => {
+            const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'Home', 'End', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+            const isNumberKey = (e.key >= '0' && e.key <= '9');
+            const isDecimalKey = e.key === '.' && !element.value.includes('.');
+            const isMinusKey = e.key === '-' && element.selectionStart === 0 && !element.value.includes('-');
+            
+            if (!allowedKeys.includes(e.key) && !isNumberKey && !isDecimalKey && !isMinusKey && !e.ctrlKey) {
+                e.preventDefault();
+            }
+        });
+
+        // Validate on input
+        element.addEventListener('input', () => {
+            this.validateInput(element, rules);
+        });
+
+        // Validate on blur (when user leaves the field)
+        element.addEventListener('blur', () => {
+            this.validateAndClampInput(element.id, rules.min, rules.max, rules.default);
+        });
+    }
+
+    validateInput(element, rules) {
+        const value = parseFloat(element.value);
+        const isValid = !isNaN(value) && value >= rules.min && value <= rules.max;
+        
+        // Visual feedback
+        if (element.value && !isValid) {
+            element.style.borderColor = '#e74c3c';
+            element.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+        } else {
+            element.style.borderColor = '';
+            element.style.backgroundColor = '';
+        }
+        
+        return isValid;
+    }
+
+    validateAndClampInput(inputId, min, max, defaultValue) {
+        const element = document.getElementById(inputId);
+        if (!element) return defaultValue;
+        
+        let value = parseFloat(element.value);
+        
+        // Handle invalid input
+        if (isNaN(value) || value === null || value === undefined) {
+            value = defaultValue;
+            element.value = defaultValue;
+        }
+        
+        // Clamp to valid range
+        if (value < min) {
+            value = min;
+            element.value = min;
+            this.showValidationMessage(element, `Minimum value is ${min}`);
+        } else if (value > max) {
+            value = max;
+            element.value = max;
+            this.showValidationMessage(element, `Maximum value is ${max}`);
+        }
+        
+        // Reset visual feedback for valid inputs
+        element.style.borderColor = '';
+        element.style.backgroundColor = '';
+        
+        return value;
+    }
+
+    showValidationMessage(element, message) {
+        // Create or update validation message
+        let messageElement = element.parentNode.querySelector('.validation-message');
+        if (!messageElement) {
+            messageElement = document.createElement('div');
+            messageElement.className = 'validation-message';
+            messageElement.style.cssText = 'color: #e74c3c; font-size: 0.8rem; margin-top: 4px; display: none;';
+            element.parentNode.appendChild(messageElement);
+        }
+        
+        messageElement.textContent = message;
+        messageElement.style.display = 'block';
+        
+        // Hide message after 3 seconds
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 3000);
+    }
+
+    // Enhanced calculation methods with validation
     calculateRealEstateInvestment() {
-        const propertyPrice = parseFloat(document.getElementById('property-price').value);
-        const downPayment = parseFloat(document.getElementById('down-payment').value);
-        const interestRate = parseFloat(document.getElementById('interest-rate').value) / 100;
-        const rentalYield = parseFloat(document.getElementById('rental-yield').value) / 100;
-        const appreciation = parseFloat(document.getElementById('property-appreciation').value) / 100;
-        const maintenanceCosts = parseFloat(document.getElementById('maintenance-costs').value) / 100;
-        const monthlyHOAFee = parseFloat(document.getElementById('hoa-fee').value) || 0;
-        const timeHorizon = parseInt(document.getElementById('time-horizon').value);
+        // Validate all inputs before calculation
+        const propertyPrice = this.validateAndClampInput('property-price', 50000, 50000000, 435000);
+        const downPayment = this.validateAndClampInput('down-payment', 1000, 10000000, 87000);
+        const interestRate = this.validateAndClampInput('interest-rate', 0.1, 30, 6.7) / 100;
+        const rentalYield = this.validateAndClampInput('rental-yield', 0, 20, 0) / 100;
+        const appreciation = this.validateAndClampInput('property-appreciation', -10, 20, 4) / 100;
+        const maintenanceCosts = this.validateAndClampInput('maintenance-costs', 0, 10, 2) / 100;
+        const monthlyHOAFee = this.validateAndClampInput('hoa-fee', 0, 5000, 0);
+        const timeHorizon = this.validateAndClampInput('time-horizon', 1, 50, 10);
+
+        // Additional validation
+        if (downPayment > propertyPrice) {
+            document.getElementById('down-payment').value = propertyPrice * 0.2; // Set to 20%
+            this.showValidationMessage(document.getElementById('down-payment'), 'Down payment cannot exceed property price');
+            return this.calculateRealEstateInvestment(); // Recalculate with corrected values
+        }
 
         const downPaymentPercent = (downPayment / propertyPrice) * 100;
         const loanAmount = propertyPrice - downPayment;

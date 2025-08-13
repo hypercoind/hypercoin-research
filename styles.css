@@ -2,6 +2,8 @@
 
 :root {
     --primary-orange: #f7931a;
+    --bitcoin-orange: #f7931a;
+    --bitcoin-orange-dark: #e6841a;
     --dark-bg: #0d1117;
     --card-bg: #161b22;
     --border-color: #30363d;
@@ -22,6 +24,8 @@
     --text-primary: #1a1a1a;
     --text-secondary: #333333;
     --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --bitcoin-orange: #f7931a;
+    --bitcoin-orange-dark: #d17316;
 }
 
 * {
@@ -331,4 +335,379 @@ input:focus, select:focus {
 
 .animate-fade-in {
     animation: fastFadeIn 0.25s ease forwards;
+}
+
+/* Simulator/Stats specific styles */
+.controls, .simulation-controls {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Stats and probability styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stat-label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.stat-value {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    white-space: nowrap;
+}
+
+/* Table styles for probability tables */
+.probability-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.probability-table th,
+.probability-table td {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.probability-table th {
+    background: var(--dark-bg);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.probability-table td {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.probability-table .milestone {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.prob-high {
+    color: var(--success-green) !important;
+    font-weight: 700;
+}
+
+.prob-medium {
+    color: var(--accent-gold) !important;
+    font-weight: 600;
+}
+
+.prob-low {
+    color: var(--text-secondary) !important;
+}
+
+/* Hero section styles */
+.hero, .hero-section {
+    padding: 5rem;
+    text-align: center;
+    position: relative;
+    margin-top: 5rem;
+}
+
+.hero::before, .hero-section::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(
+        circle,
+        rgba(247, 147, 26, 0.1) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.hero h1, .hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(
+        135deg,
+        var(--text-primary),
+        var(--primary-orange)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero p, .hero-section p {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Disclaimer section */
+.disclaimer-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-gold);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.disclaimer-section p {
+    margin: 0;
+}
+
+.disclaimer-section strong {
+    color: var(--text-primary);
+}
+
+/* Form input groups */
+.input-group, .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label, .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Select dropdown styles */
+select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Home page specific styles */
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+}
+
+nav li {
+    display: inline;
+}
+
+.content-section {
+    display: flexbox;
+    margin-bottom: 4rem;
+    margin-top: 8rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    text-align: center;
+    position: relative;
+}
+
+.content-section h2::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-orange), var(--bitcoin-orange-dark));
+    border-radius: 2px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.content-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 280px;
+}
+
+.content-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-orange);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.content-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-orange), var(--bitcoin-orange-dark));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.content-card:hover::before {
+    opacity: 1;
+}
+
+.content-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.content-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.content-card .btn {
+    margin-top: auto;
+    align-self: center;
+}
+
+footer {
+    background: var(--dark-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 3rem 0;
+    text-align: center;
+    margin-top: 4rem;
+}
+
+footer p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+footer a {
+    color: var(--primary-orange);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--bitcoin-orange-dark);
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
