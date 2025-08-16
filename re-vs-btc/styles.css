@@ -642,6 +642,8 @@ header p {
     .input-section {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
     }
     
     .results-grid {
@@ -650,21 +652,28 @@ header p {
     }
     
     header {
-        padding: 1.5rem;
+        padding: 2rem 0;
     }
     
     header h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        line-height: 1.2;
+        word-wrap: break-word;
     }
     
     header p {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        padding: 0 0.5rem;
     }
     
     .controls button {
         display: block;
         width: 100%;
         margin: 0.5rem 0;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
     }
     
     .real-estate-inputs,
@@ -675,12 +684,48 @@ header p {
         padding: 1.5rem;
     }
     
+    .real-estate-inputs h2,
+    .portfolio-inputs h2,
+    .rent-inputs h2,
+    .common-inputs h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .allocation-inputs h3 {
+        font-size: 1.2rem;
+        margin: 1.25rem 0 0.75rem 0;
+    }
+    
     .result-card {
         padding: 1.5rem;
     }
     
+    .result-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        padding: 0.75rem 0;
+    }
+    
+    .result-item .value {
+        font-size: 1.05rem;
+        word-break: break-word;
+        max-width: 100%;
+    }
+    
+    .result-item .label {
+        font-size: 0.9rem;
+    }
+    
     .results-section h2 {
         font-size: 1.8rem;
+        margin-bottom: 1.25rem;
     }
     
     .help-section {
@@ -693,7 +738,7 @@ header p {
     }
     
     .overview-card,
-        .instructions-card,
+    .instructions-card,
     .assumptions-card,
     .disclaimer-card {
         padding: 1rem;
@@ -706,12 +751,103 @@ header p {
     .chart-container {
         padding: 1rem;
         overflow-x: auto;
+        margin-bottom: 1.5rem;
     }
     
     #comparison-chart {
         margin-top: 1rem;
         width: 100%;
-        min-height: 450px;
+        min-height: 400px;
+    }
+    
+    .payment-details {
+        padding: 1.25rem;
+        margin-top: 0.75rem;
+    }
+    
+    .payment-details h4 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .comparison-summary {
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .comparison-summary h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .comparison-summary p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    #calculate-btn {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        margin: 1.5rem auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0.75rem 10px;
+    }
+    
+    header {
+        padding: 1.5rem 0;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    header p {
+        font-size: 0.95rem;
+    }
+    
+    .real-estate-inputs,
+    .portfolio-inputs,
+    .rent-inputs,
+    .common-inputs,
+    .results-section {
+        padding: 1rem;
+    }
+    
+    .result-card {
+        padding: 1rem;
+    }
+    
+    .results-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .result-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .result-item .value {
+        font-size: 1rem;
+    }
+    
+    .comparison-summary {
+        padding: 1rem;
+    }
+    
+    .comparison-summary h3 {
+        font-size: 1.2rem;
+    }
+    
+    .comparison-summary p {
+        font-size: 0.95rem;
+    }
+    
+    #comparison-chart {
+        min-height: 350px;
     }
 }
 

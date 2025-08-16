@@ -422,13 +422,26 @@
     .results-section {
         padding: 1.5rem;
     }
+    
+    .real-estate-inputs h2,
+    .portfolio-inputs h2,
+    .rent-inputs h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.25rem;
+    }
 
     .result-card {
         padding: 1.5rem;
     }
+    
+    .result-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1.25rem;
+    }
 
     .results-section h2 {
         font-size: 1.8rem;
+        margin-bottom: 1.25rem;
     }
 
     .results-grid {
@@ -440,10 +453,17 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 0.25rem;
+        padding: 0.75rem 0;
     }
 
     .result-item .value {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
+        word-break: break-word;
+        max-width: 100%;
+    }
+    
+    .result-item .label {
+        font-size: 0.9rem;
     }
 
     .time-horizon-group {
@@ -455,5 +475,75 @@
     .reset-btn {
         width: 100%;
         text-align: center;
+        margin-top: 0.5rem;
+    }
+    
+    #calculate-btn {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        margin: 1.5rem auto;
+    }
+    
+    .payment-details {
+        padding: 1.25rem;
+        margin-top: 0.75rem;
+    }
+    
+    .payment-details h4 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .comparison-summary {
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .comparison-summary h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .comparison-summary p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+}
+
+@media (max-width: 480px) {
+    .real-estate-inputs,
+    .portfolio-inputs,
+    .rent-inputs,
+    .results-section {
+        padding: 1rem;
+    }
+    
+    .result-card {
+        padding: 1rem;
+    }
+    
+    .results-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .result-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .result-item .value {
+        font-size: 1rem;
+    }
+    
+    .comparison-summary {
+        padding: 1rem;
+    }
+    
+    .comparison-summary h3 {
+        font-size: 1.2rem;
+    }
+    
+    .comparison-summary p {
+        font-size: 0.95rem;
     }
 }
