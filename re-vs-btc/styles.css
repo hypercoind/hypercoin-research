@@ -617,22 +617,22 @@ header p {
     border-radius: 12px;
     box-shadow: var(--shadow);
     border: 1px solid var(--border-color);
+    min-height: 650px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #comparison-chart {
-    max-width: 100%;
-    height: auto;
-    width: 100%;
-    min-height: 600px;
+    width: 100% !important;
+    height: 600px !important;
+    min-height: 600px !important;
 }
 
 .chart-container canvas {
     color: var(--text-primary) !important;
 }
 
-.chart-container {
-    --chart-text-color: var(--text-primary);
-}
 
 @media (max-width: 768px) {
     .container {
@@ -752,12 +752,14 @@ header p {
         padding: 1rem;
         overflow-x: auto;
         margin-bottom: 1.5rem;
+        min-height: 550px;
     }
     
     #comparison-chart {
         margin-top: 1rem;
-        width: 100%;
-        min-height: 400px;
+        width: 100% !important;
+        min-height: 500px !important;
+        height: 500px !important;
     }
     
     .payment-details {
@@ -818,6 +820,16 @@ header p {
         padding: 1rem;
     }
     
+    .chart-container {
+        padding: 0.75rem;
+        min-height: 500px;
+    }
+    
+    #comparison-chart {
+        min-height: 450px !important;
+        height: 450px !important;
+    }
+    
     .result-card {
         padding: 1rem;
     }
@@ -847,7 +859,8 @@ header p {
     }
     
     #comparison-chart {
-        min-height: 350px;
+        min-height: 450px !important;
+        height: 450px !important;
     }
 }
 

@@ -247,7 +247,7 @@
             </div>
 
             <div class="chart-container">
-                <canvas id="comparison-chart" width="800" height="400"></canvas>
+                <canvas id="comparison-chart"></canvas>
             </div>
         </div>
 
@@ -268,12 +268,15 @@
         
         // Function to apply theme securely
         function applyTheme(theme) {
+            // Check if mobile device (768px or less)
+            const isMobile = window.innerWidth <= 768;
+            
             if (theme === 'light') {
                 body.setAttribute('data-theme', 'light');
-                themeToggle.textContent = '🌙 Dark';
+                themeToggle.textContent = isMobile ? '🌙' : '🌙 Dark';
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️ Light';
+                themeToggle.textContent = isMobile ? '☀️' : '☀️ Light';
             }
         }
         
@@ -333,7 +336,43 @@
             if (window.calculator && window.calculator.chart) {
                 window.calculator.updateChartColors();
             }
+            
+            // Trigger scroll event to update header colors
+            window.dispatchEvent(new Event('scroll'));
         });
+        
+        // Update button text on window resize
+        window.addEventListener('resize', function() {
+            const currentTheme = body.getAttribute('data-theme') || 'dark';
+            applyTheme(currentTheme);
+        });
+        
+        // Mobile tap-to-scroll-to-top feature
+        function addMobileScrollToTop() {
+            const siteHeader = document.querySelector('.site-header');
+            if (!siteHeader) return;
+            
+            function handleHeaderTap(e) {
+                // Only on mobile devices (768px or less)
+                if (window.innerWidth <= 768) {
+                    // Don't trigger if tapping the theme toggle button
+                    if (e.target.closest('.theme-toggle')) return;
+                    
+                    // Scroll to top smoothly
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+            
+            siteHeader.addEventListener('click', handleHeaderTap);
+            siteHeader.addEventListener('touchend', handleHeaderTap);
+        }
+        
+        // Initialize mobile scroll to top
+        addMobileScrollToTop();
+        
         
         // Handle theme from URL parameter (for carrying over from main page)
         const urlParams = new URLSearchParams(window.location.search);
@@ -366,8 +405,14 @@
         // Add scroll effect to site header (navigation bar)
         window.addEventListener("scroll", () => {
             const siteHeader = document.querySelector(".site-header");
+            const currentTheme = body.getAttribute('data-theme');
+            
             if (window.scrollY > 100) {
-                siteHeader.style.background = "rgba(13, 17, 23, 0.95)";
+                if (currentTheme === 'light') {
+                    siteHeader.style.background = "rgba(255, 255, 255, 0.95)";
+                } else {
+                    siteHeader.style.background = "rgba(13, 17, 23, 0.95)";
+                }
                 siteHeader.style.backdropFilter = "blur(10px)";
             } else {
                 siteHeader.style.background = "transparent";

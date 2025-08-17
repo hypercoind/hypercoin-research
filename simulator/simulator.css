@@ -144,6 +144,15 @@
 .simulator .loading-overlay {
     background: var(--dark-bg);
     z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .simulator .loading-spinner {
@@ -173,10 +182,28 @@
 
 /* Simulator mobile responsive adjustments */
 @media (max-width: 768px) {
+    .simulator .loading-overlay {
+        padding: 1rem;
+    }
+    
+    .simulator .loading-text {
+        font-size: 1.1rem;
+        text-align: center;
+        padding: 0 1rem;
+    }
+    
+    .loading-subtext {
+        font-size: 0.85rem;
+        max-width: 280px;
+        text-align: center;
+        padding: 0 1rem;
+    }
+    
     .simulator .chart-container {
         height: 500px;
         padding: 1rem;
         margin-bottom: 1.5rem;
+        overflow-x: auto;
     }
     
     .controls {
@@ -190,7 +217,8 @@
         width: 100%;
         padding: 1rem 1.5rem;
         font-size: 1rem;
-        margin: 0.5rem 0;
+        margin: 1.5rem auto;
+        min-height: 44px;
     }
     
     .stat-card {
@@ -199,7 +227,24 @@
     
     .stat-card h3 {
         font-size: 1.2rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .stat-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        padding: 0.75rem 0;
+    }
+    
+    .stat-value {
+        font-size: 1.05rem;
+        word-break: break-word;
+        max-width: 100%;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
     }
     
     .probability-table {
@@ -233,6 +278,30 @@
 }
 
 @media (max-width: 480px) {
+    .simulator .loading-overlay {
+        padding: 0.75rem;
+    }
+    
+    .simulator .loading-spinner {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .simulator .loading-text {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .loading-subtext {
+        font-size: 0.8rem;
+        max-width: 250px;
+    }
+    
+    .simulator header {
+        padding: 1.5rem 0;
+    }
+    
     .simulator .chart-container {
         height: 400px;
         padding: 0.75rem;
@@ -249,6 +318,10 @@
     
     .stat-card h3 {
         font-size: 1.1rem;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
     }
     
     .probability-table {

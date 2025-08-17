@@ -1039,6 +1039,7 @@ class InvestmentCalculator {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                aspectRatio: 2,
                 interaction: {
                     intersect: false,
                     mode: 'index'
@@ -1077,6 +1078,9 @@ class InvestmentCalculator {
                         }
                     },
                     y: {
+                        type: 'linear',
+                        beginAtZero: true,
+                        min: 0,
                         title: {
                             display: true,
                             text: 'Value ($)',
@@ -1084,8 +1088,15 @@ class InvestmentCalculator {
                         },
                         ticks: {
                             color: textColor,
+                            stepSize: 100000,
                             callback: function(value) {
-                                return '$' + value.toLocaleString();
+                                if (value >= 1000000) {
+                                    return '$' + (value / 1000000).toFixed(1) + 'M';
+                                } else if (value >= 1000) {
+                                    return '$' + (value / 1000).toFixed(0) + 'K';
+                                } else {
+                                    return '$' + value.toLocaleString();
+                                }
                             }
                         },
                         grid: {

@@ -41,10 +41,10 @@
 
     <main>
         <div class="container">
-            <section class="hero">
+            <header>
                 <h1>Bitcoin Monte Carlo Simulator</h1>
                 <p>Probabilistic modeling of Bitcoin price trajectories using advanced statistical methods</p>
-            </section>
+            </header>
 
             <div class="controls">
                 <div class="control-group">
@@ -749,7 +749,12 @@
 
         // Secure theme toggle function
         function setThemeToggleText(theme) {
-            themeToggle.textContent = theme === 'light' ? '🌙 Dark' : '☀️ Light';
+            // Check if mobile device (768px or less)
+            const isMobile = window.innerWidth <= 768;
+            
+            themeToggle.textContent = isMobile ? 
+                (theme === 'light' ? '🌙' : '☀️') : 
+                (theme === 'light' ? '🌙 Dark' : '☀️ Light');
         }
 
         // Theme toggle functionality
@@ -770,7 +775,43 @@
             if (chart) {
                 updateChartColors();
             }
+            
+            // Trigger scroll event to update header colors
+            window.dispatchEvent(new Event('scroll'));
         });
+        
+        // Update button text on window resize
+        window.addEventListener('resize', function() {
+            const currentTheme = body.getAttribute('data-theme') || 'dark';
+            setThemeToggleText(currentTheme);
+        });
+        
+        // Mobile tap-to-scroll-to-top feature
+        function addMobileScrollToTop() {
+            const siteHeader = document.querySelector('.site-header');
+            if (!siteHeader) return;
+            
+            function handleHeaderTap(e) {
+                // Only on mobile devices (768px or less)
+                if (window.innerWidth <= 768) {
+                    // Don't trigger if tapping the theme toggle button
+                    if (e.target.closest('.theme-toggle')) return;
+                    
+                    // Scroll to top smoothly
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+            
+            siteHeader.addEventListener('click', handleHeaderTap);
+            siteHeader.addEventListener('touchend', handleHeaderTap);
+        }
+        
+        // Initialize mobile scroll to top
+        addMobileScrollToTop();
+        
         
         // Function to update chart colors based on theme
         function updateChartColors() {
@@ -799,15 +840,21 @@
             chart.update('none'); // Use 'none' for instant update without animation
         }
 
-        // Add scroll effect to header (like hypercoin-development)
+        // Add scroll effect to site header (navigation bar)
         window.addEventListener("scroll", () => {
-            const header = document.querySelector("header");
+            const siteHeader = document.querySelector(".site-header");
+            const currentTheme = body.getAttribute('data-theme');
+            
             if (window.scrollY > 100) {
-                header.style.background = "rgba(13, 17, 23, 0.95)";
-                header.style.backdropFilter = "blur(10px)";
+                if (currentTheme === 'light') {
+                    siteHeader.style.background = "rgba(255, 255, 255, 0.95)";
+                } else {
+                    siteHeader.style.background = "rgba(13, 17, 23, 0.95)";
+                }
+                siteHeader.style.backdropFilter = "blur(10px)";
             } else {
-                header.style.background = "transparent";
-                header.style.backdropFilter = "blur(10px)";
+                siteHeader.style.background = "transparent";
+                siteHeader.style.backdropFilter = "blur(10px)";
             }
         });
 
