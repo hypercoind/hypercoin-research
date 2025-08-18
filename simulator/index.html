@@ -7,15 +7,14 @@
     <title>Bitcoin Monte Carlo Simulator - Hypercoin Research</title>
     
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.coingecko.com https://api.coincap.io https://api.binance.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.coingecko.com https://api.coincap.io https://api.binance.com; base-uri 'self'; form-action 'self';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js" 
-            integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w==" 
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js@2.26.0/dist/plotly.min.js" 
             crossorigin="anonymous" 
             referrerpolicy="no-referrer"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
@@ -50,10 +49,9 @@
                 <div class="control-group">
                     <label>Current Price ($)</label>
                     <div class="price-input-container">
-                        <input type="number" id="currentPrice" value="115000" min="1000" step="1000">
+                        <input type="number" id="currentPrice" min="1000" step="1000">
                         <div class="price-loading" id="priceLoading" style="display: none;">
                             <span class="price-spinner">⟳</span>
-                            <span class="loading-text">Fetching live price...</span>
                         </div>
                     </div>
                     <div class="price-info" id="priceInfo" style="display: none;">
@@ -63,7 +61,7 @@
                 </div>
                 <div class="control-group">
                     <label>Annual Volatility (%)</label>
-                    <input type="number" id="volatility" value="42" min="10" max="200" step="5">
+                    <input type="number" id="volatility" value="42" min="10" max="200" step="1">
                 </div>
                 <div class="control-group">
                     <label>Scenario</label>
@@ -93,7 +91,7 @@
             </div>
 
             <div class="chart-container" style="display: none;">
-                <canvas id="priceChart"></canvas>
+                <div id="priceChart" style="width: 100%; height: 100%;"></div>
             </div>
 
             <div class="stats-grid" id="statsGrid" style="display: none;"></div>
@@ -260,9 +258,7 @@
             const priceLoading = document.getElementById('priceLoading');
             
             // Show loading state
-            priceLoading.style.display = 'flex';
-            input.style.paddingRight = '160px'; // Make room for loading indicator
-            
+            priceLoading.style.display = 'inline-block';
             try {
                 const price = await fetchCurrentBitcoinPrice();
                 
@@ -450,9 +446,6 @@
                 };
             }
 
-            // Update chart
-            updateChart(timeHorizons, percentiles, currentPrice);
-
             // Update statistics
             updateStats(results);
 
@@ -478,14 +471,27 @@
 
             updateProbabilityTable(probabilities);
 
+            // Update chart and wait for it to complete
+            const chartPromise = updateChart(timeHorizons, percentiles, currentPrice);
+
             // Ensure loading animation is visible for minimum duration before hiding
             const minLoadingTime = 800; // Show for at least 800ms
-            await new Promise(resolve => setTimeout(resolve, minLoadingTime));
+            await Promise.all([
+                new Promise(resolve => setTimeout(resolve, minLoadingTime)),
+                chartPromise
+            ]);
 
             // Show results sections
             document.querySelector('.chart-container').style.display = 'block';
             document.getElementById('statsGrid').style.display = 'grid';
             document.querySelector('.probability-table').style.display = 'block';
+            
+            // Force Plotly to resize after container becomes visible
+            if (chart) {
+                setTimeout(() => {
+                    Plotly.Plots.resize('priceChart');
+                }, 100);
+            }
 
             // Smooth fade-out animation and show main content if coming from homepage
             loading.style.opacity = '0';
@@ -512,146 +518,110 @@
 
         // Update chart
         function updateChart(years, percentiles, currentPrice) {
-            const ctx = document.getElementById('priceChart').getContext('2d');
-
+            if (typeof Plotly === 'undefined') {
+                return Promise.resolve();
+            }
+            
             if (chart) {
-                chart.destroy();
+                Plotly.purge('priceChart');
             }
             
-            // Get theme colors using the same approach as re-vs-btc
+            // Get theme colors with proper light mode detection
             const computedStyle = getComputedStyle(document.body);
-            let textColor = computedStyle.getPropertyValue('--text-primary').trim();
-            let gridColor = computedStyle.getPropertyValue('--border-color').trim();
+            const isLight = document.body.getAttribute('data-theme') === 'light';
             
-            // Fallback colors if CSS variables aren't loaded yet
-            if (!textColor) {
-                const isLight = document.body.getAttribute('data-theme') === 'light';
-                textColor = isLight ? '#1a1a1a' : '#f0f6fc';
-                gridColor = isLight ? '#e0e0e0' : '#30363d';
-            }
+            const textColor = computedStyle.getPropertyValue('--text-primary').trim() || (isLight ? '#1a1a1a' : '#f0f6fc');
+            const gridColor = computedStyle.getPropertyValue('--border-color').trim() || (isLight ? '#e0e0e0' : '#30363d');
+            const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || (isLight ? '#f8f9fa' : '#161b22');
 
-            const datasets = [
+            const traces = [
                 {
-                    label: '90th Percentile',
-                    data: years.map(y => percentiles[y].p90),
-                    borderColor: '#00ff00',
-                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                    fill: false,
-                    tension: 0.1
+                    x: years.map(y => `${y} Years`),
+                    y: years.map(y => percentiles[y].p90),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: '90th Percentile',
+                    line: { color: '#00ff00', width: 2 }
                 },
                 {
-                    label: '75th Percentile',
-                    data: years.map(y => percentiles[y].p75),
-                    borderColor: '#88ff88',
-                    backgroundColor: 'rgba(136, 255, 136, 0.1)',
-                    fill: false,
-                    tension: 0.1
+                    x: years.map(y => `${y} Years`),
+                    y: years.map(y => percentiles[y].p75),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: '75th Percentile',
+                    line: { color: '#88ff88', width: 2 }
                 },
                 {
-                    label: 'Median (50th)',
-                    data: years.map(y => percentiles[y].p50),
-                    borderColor: '#f7931a',
-                    backgroundColor: 'rgba(247, 147, 26, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.1
+                    x: years.map(y => `${y} Years`),
+                    y: years.map(y => percentiles[y].p50),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Median (50th)',
+                    line: { color: '#f7931a', width: 2 }
                 },
                 {
-                    label: '25th Percentile',
-                    data: years.map(y => percentiles[y].p25),
-                    borderColor: '#ff8888',
-                    backgroundColor: 'rgba(255, 136, 136, 0.1)',
-                    fill: false,
-                    tension: 0.1
+                    x: years.map(y => `${y} Years`),
+                    y: years.map(y => percentiles[y].p25),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: '25th Percentile',
+                    line: { color: '#ff8888', width: 2 }
                 },
                 {
-                    label: '10th Percentile',
-                    data: years.map(y => percentiles[y].p10),
-                    borderColor: '#ff0000',
-                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                    fill: false,
-                    tension: 0.1
+                    x: years.map(y => `${y} Years`),
+                    y: years.map(y => percentiles[y].p10),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: '10th Percentile',
+                    line: { color: '#ff0000', width: 2 }
                 }
             ];
 
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: years.map(y => `${y} Years`),
-                    datasets: datasets
+            const layout = {
+                title: {
+                    text: 'Bitcoin Price - Percentile Ranges',
+                    font: { color: textColor, size: 16 }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            top: 20,
-                            right: 20,
-                            bottom: 20,
-                            left: 20
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Bitcoin Price Projections - Percentile Ranges',
-                            color: textColor,
-                            font: {
-                                size: 16
-                            }
-                        },
-                        legend: {
-                            labels: {
-                                color: textColor
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return context.dataset.label + ': ' + formatPrice(context.parsed.y);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            type: 'logarithmic',
-                            ticks: {
-                                color: textColor,
-                                maxTicksLimit: 8,
-                                padding: 10,
-                                callback: function (value) {
-                                    return formatPrice(value);
-                                }
-                            },
-                            grid: {
-                                color: gridColor
-                            },
-                            title: {
-                                display: true,
-                                text: 'Price (USD)',
-                                color: textColor
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: textColor
-                            },
-                            grid: {
-                                color: gridColor
-                            },
-                            title: {
-                                display: true,
-                                text: 'Time Horizon',
-                                color: textColor
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    }
-                }
+                xaxis: {
+                    title: { text: 'Time Horizon', font: { color: textColor } },
+                    tickfont: { color: textColor },
+                    gridcolor: gridColor,
+                    showline: true,
+                    mirror: true
+                },
+                yaxis: {
+                    type: 'log',
+                    title: { text: 'Price (USD)', font: { color: textColor }, standoff: 20 },
+                    tickfont: { color: textColor },
+                    tick0: 0,
+                    gridcolor: gridColor,
+                    tickformat: '$,.0f',
+                    showline: true,
+                    mirror: true
+                },
+                paper_bgcolor: bgColor,
+                plot_bgcolor: bgColor,
+                legend: {
+                    visible: false
+                },
+                margin: { t: 100, b: 60, l: 100, r: 30 }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d']
+            };
+
+            return Plotly.newPlot('priceChart', traces, layout, config).then((plotDiv) => {
+                // Chart creation complete - store the chart reference
+                chart = plotDiv;
+                return plotDiv;
+            }).catch((error) => {
+                console.error('Failed to create Monte Carlo chart:', error);
+                // Still return something so loading doesn't hang
+                chart = true;
+                return null;
             });
         }
 
@@ -818,26 +788,26 @@
             if (!chart) return;
             
             const computedStyle = getComputedStyle(document.body);
-            let textColor = computedStyle.getPropertyValue('--text-primary').trim();
-            let gridColor = computedStyle.getPropertyValue('--border-color').trim();
+            const isLight = document.body.getAttribute('data-theme') === 'light';
             
-            // Fallback colors if CSS variables aren't loaded yet
-            if (!textColor) {
-                const isLight = document.body.getAttribute('data-theme') === 'light';
-                textColor = isLight ? '#1a1a1a' : '#f0f6fc';
-                gridColor = isLight ? '#e0e0e0' : '#30363d';
-            }
+            const textColor = computedStyle.getPropertyValue('--text-primary').trim() || (isLight ? '#1a1a1a' : '#f0f6fc');
+            const gridColor = computedStyle.getPropertyValue('--border-color').trim() || (isLight ? '#e0e0e0' : '#30363d');
+            const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || (isLight ? '#f8f9fa' : '#161b22');
             
-            chart.options.plugins.title.color = textColor;
-            chart.options.plugins.legend.labels.color = textColor;
-            chart.options.scales.x.ticks.color = textColor;
-            chart.options.scales.x.title.color = textColor;
-            chart.options.scales.x.grid.color = gridColor;
-            chart.options.scales.y.ticks.color = textColor;
-            chart.options.scales.y.title.color = textColor;
-            chart.options.scales.y.grid.color = gridColor;
+            const update = {
+                'title.font.color': textColor,
+                'xaxis.title.font.color': textColor,
+                'xaxis.tickfont.color': textColor,
+                'xaxis.gridcolor': gridColor,
+                'yaxis.title.font.color': textColor,
+                'yaxis.tickfont.color': textColor,
+                'yaxis.gridcolor': gridColor,
+                'legend.font.color': textColor,
+                'paper_bgcolor': bgColor,
+                'plot_bgcolor': bgColor
+            };
             
-            chart.update('none'); // Use 'none' for instant update without animation
+            Plotly.relayout('priceChart', update);
         }
 
         // Add scroll effect to site header (navigation bar)
@@ -935,9 +905,23 @@
             await loadCurrentPrice();
         }
 
+        // Add window resize handler for chart
+        window.addEventListener('resize', () => {
+            if (chart) {
+                Plotly.Plots.resize('priceChart');
+            }
+        });
+
         // Run initial simulation
         window.onload = function () {
-            initializeApp();
+            const initApp = () => {
+                if (typeof Plotly !== 'undefined') {
+                    initializeApp();
+                } else {
+                    setTimeout(initApp, 100);
+                }
+            };
+            initApp();
         };
     </script>
 </body>

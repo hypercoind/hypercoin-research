@@ -66,11 +66,6 @@
     box-shadow: 0 10px 25px rgba(247, 147, 26, 0.3);
 }
 
-/* Simulator chart container with specific height */
-.simulator .chart-container {
-    height: 600px;
-}
-
 /* Simulator-specific stat card styles */
 .stat-card h3 {
     color: var(--bitcoin-orange);
@@ -155,6 +150,10 @@
     height: 100%;
 }
 
+.simulator header {
+    padding: 1rem 0 0 0;
+}
+
 .simulator .loading-spinner {
     width: 80px;
     height: 80px;
@@ -197,13 +196,6 @@
         max-width: 280px;
         text-align: center;
         padding: 0 1rem;
-    }
-    
-    .simulator .chart-container {
-        height: 500px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        overflow-x: auto;
     }
     
     .controls {
@@ -299,13 +291,7 @@
     }
     
     .simulator header {
-        padding: 1.5rem 0;
-    }
-    
-    .simulator .chart-container {
-        height: 400px;
-        padding: 0.75rem;
-        margin-bottom: 1rem;
+        padding: 4rem 0 8.5rem 0;
     }
     
     .controls {

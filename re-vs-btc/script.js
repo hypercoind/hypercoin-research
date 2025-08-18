@@ -547,9 +547,9 @@ class InvestmentCalculator {
             }, 100);
             
             // Set up chart and display comparison immediately
-            setTimeout(() => {
-                this.displayComparison(realEstateResults, portfolioResults, bitcoinSavingsResults);
-                this.createAnimatedChart(realEstateResults, portfolioResults, bitcoinSavingsResults);
+            setTimeout(async () => {
+                this.displayComparison();
+                await this.createAnimatedChart(realEstateResults, portfolioResults, bitcoinSavingsResults);
             }, 200);
             
             // Reset button state
@@ -724,7 +724,7 @@ class InvestmentCalculator {
         savingsSummary.textContent = `Occupant ${savingsStatus} ${formatCurrency(savingsAmount)}/month on average${btcBenefit}`;
     }
 
-    calculateYearlyValues(reResults, timeHorizon) {
+    calculateYearlyValues(realEstateResults, timeHorizon) {
         const propertyPrice = parseFloat(document.getElementById('property-price').value);
         const appreciation = parseFloat(document.getElementById('property-appreciation').value) / 100;
         const rentalYield = parseFloat(document.getElementById('rental-yield').value) / 100;
@@ -763,7 +763,6 @@ class InvestmentCalculator {
             const interestPaidToDate = (monthlyPayment * paymentsToDate) - (loanAmount - remainingBalance);
             const maintenancePaidToDate = (propertyPrice * maintenanceCosts) * year;
             const hoaFeesPaidToDate = monthlyHOAFee * paymentsToDate;
-            const totalInvestmentToDate = downPayment + interestPaidToDate + maintenancePaidToDate + hoaFeesPaidToDate;
             
             // 5. Total return (matches display calculation method)
             const propertyEquityForYear = currentPropertyValue - remainingBalance;
@@ -897,7 +896,7 @@ class InvestmentCalculator {
         });
     }
 
-    displayComparison(realEstateResults, portfolioResults, bitcoinSavingsResults) {
+    displayComparison() {
         const comparisonSummary = document.querySelector('.comparison-summary');
         
         if (comparisonSummary) {
@@ -987,177 +986,139 @@ class InvestmentCalculator {
         
         chartContainer.classList.add('animate-in');
         
+        if (typeof Plotly === 'undefined') {
+            return Promise.resolve();
+        }
+        
         // Clear existing chart
         if (this.chart) {
-            this.chart.destroy();
+            Plotly.purge('comparison-chart');
         }
 
-        const ctx = document.getElementById('comparison-chart').getContext('2d');
         const timeHorizon = parseInt(document.getElementById('time-horizon').value);
         const years = Array.from({length: timeHorizon + 1}, (_, i) => i);
 
-        // Get current theme colors
+        // Get current theme colors with proper light mode detection
         const computedStyle = getComputedStyle(document.body);
-        const textColor = computedStyle.getPropertyValue('--text-primary').trim();
-        const borderColor = computedStyle.getPropertyValue('--border-color').trim();
+        const isLight = document.body.getAttribute('data-theme') === 'light';
+        
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || (isLight ? '#1a1a1a' : '#f0f6fc');
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim() || (isLight ? '#e0e0e0' : '#30363d');
+        const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || (isLight ? '#f8f9fa' : '#161b22');
         
         const realEstateValues = this.calculateYearlyValues(realEstateResults, timeHorizon);
         const portfolioValues = this.calculatePortfolioYearlyValues(portfolioResults, timeHorizon);
         const bitcoinSavingsValues = this.calculateBitcoinSavingsYearlyValues(realEstateResults, timeHorizon);
 
-        // Create chart with animation disabled initially
-        this.chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: years,
-                datasets: [{
-                    label: 'Real Estate Net Worth',
-                    data: [],
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.4
-                }, {
-                    label: 'Investment Portfolio Value',
-                    data: [],
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.4
-                }, {
-                    label: 'Bitcoin Savings Strategy',
-                    data: [],
-                    borderColor: '#f7931a',
-                    backgroundColor: 'rgba(247, 147, 26, 0.1)',
-                    borderWidth: 3,
-                    fill: false,
-                    tension: 0.4
-                }]
+        const traces = [
+            {
+                x: years,
+                y: realEstateValues,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Real Estate Net Worth',
+                line: { color: '#e74c3c', width: 2 }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                aspectRatio: 2,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Investment Growth Comparison Over Time',
-                        color: textColor,
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            color: textColor,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Years',
-                            color: textColor
-                        },
-                        ticks: {
-                            color: textColor
-                        },
-                        grid: {
-                            color: borderColor
-                        }
-                    },
-                    y: {
-                        type: 'linear',
-                        beginAtZero: true,
-                        min: 0,
-                        title: {
-                            display: true,
-                            text: 'Value ($)',
-                            color: textColor
-                        },
-                        ticks: {
-                            color: textColor,
-                            stepSize: 100000,
-                            callback: function(value) {
-                                if (value >= 1000000) {
-                                    return '$' + (value / 1000000).toFixed(1) + 'M';
-                                } else if (value >= 1000) {
-                                    return '$' + (value / 1000).toFixed(0) + 'K';
-                                } else {
-                                    return '$' + value.toLocaleString();
-                                }
-                            }
-                        },
-                        grid: {
-                            color: borderColor
-                        }
-                    }
-                },
-                animation: {
-                    duration: 0
-                }
+            {
+                x: years,
+                y: portfolioValues,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Investment Portfolio Value',
+                line: { color: '#3498db', width: 2 }
+            },
+            {
+                x: years,
+                y: bitcoinSavingsValues,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Bitcoin Savings Strategy',
+                line: { color: '#f7931a', width: 2 }
             }
-        });
+        ];
 
-        // Animate data points appearing
-        this.animateChartData(realEstateValues, portfolioValues, bitcoinSavingsValues, timeHorizon);
-    }
-
-    animateChartData(realEstateValues, portfolioValues, bitcoinSavingsValues, timeHorizon) {
-        let currentPoint = 0;
-        const totalPoints = timeHorizon + 1;
-        const animationDuration = 600; // Much faster - 600ms total
-        const pointDelay = animationDuration / totalPoints;
-
-        const animateNextPoint = () => {
-            if (currentPoint < totalPoints) {
-                // Add the next data point to each dataset
-                this.chart.data.datasets[0].data.push(realEstateValues[currentPoint]);
-                this.chart.data.datasets[1].data.push(portfolioValues[currentPoint]);
-                this.chart.data.datasets[2].data.push(bitcoinSavingsValues[currentPoint]);
-                
-                // Update the chart
-                this.chart.update('none');
-                
-                currentPoint++;
-                setTimeout(animateNextPoint, pointDelay);
-            }
+        const layout = {
+            title: {
+                text: 'Investment Comparison',
+                font: { color: textColor, size: 16 }
+            },
+            xaxis: {
+                title: { text: 'Years', font: { color: textColor } },
+                tickfont: { color: textColor },
+                gridcolor: borderColor,
+                showline: true,
+                mirror: true
+            },
+            yaxis: {
+                title: { text: 'Value ($)', font: { color: textColor }, standoff: 20 },
+                tickfont: { color: textColor },
+                tick0: 0,
+                gridcolor: borderColor,
+                tickformat: '$,.0f',
+                showline: true,
+                mirror: true
+            },
+            paper_bgcolor: bgColor,
+            plot_bgcolor: bgColor,
+            legend: {
+                visible: false
+            },
+            margin: { t: 100, b: 60, l: 100, r: 30 }
         };
 
-        setTimeout(animateNextPoint, 100); // Start quickly
+        const config = {
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d']
+        };
+
+        return Plotly.newPlot('comparison-chart', traces, layout, config).then((plotDiv) => {
+            this.chart = plotDiv;
+            
+            // Force resize after chart creation to ensure proper sizing
+            setTimeout(() => {
+                if (this.chart) {
+                    Plotly.Plots.resize('comparison-chart');
+                }
+            }, 100);
+            
+            return plotDiv;
+        }).catch((error) => {
+            console.error('Failed to create chart:', error);
+            return null;
+        });
     }
+
 
     updateChartColors() {
         if (!this.chart) return;
         
-        // Get current theme colors
+        // Get current theme colors with proper light mode detection
         const computedStyle = getComputedStyle(document.body);
-        const textColor = computedStyle.getPropertyValue('--text-primary').trim();
-        const borderColor = computedStyle.getPropertyValue('--border-color').trim();
+        const isLight = document.body.getAttribute('data-theme') === 'light';
         
-        // Update chart colors
-        this.chart.options.plugins.title.color = textColor;
-        this.chart.options.plugins.legend.labels.color = textColor;
-        this.chart.options.scales.x.title.color = textColor;
-        this.chart.options.scales.x.ticks.color = textColor;
-        this.chart.options.scales.x.grid.color = borderColor;
-        this.chart.options.scales.y.title.color = textColor;
-        this.chart.options.scales.y.ticks.color = textColor;
-        this.chart.options.scales.y.grid.color = borderColor;
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || (isLight ? '#1a1a1a' : '#f0f6fc');
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim() || (isLight ? '#e0e0e0' : '#30363d');
+        const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || (isLight ? '#f8f9fa' : '#161b22');
         
-        // Update the chart
-        this.chart.update('none'); // Use 'none' for instant update without animation
+        const update = {
+            'title.font.color': textColor,
+            'xaxis.title.font.color': textColor,
+            'xaxis.tickfont.color': textColor,
+            'xaxis.gridcolor': borderColor,
+            'yaxis.title.font.color': textColor,
+            'yaxis.tickfont.color': textColor,
+            'yaxis.gridcolor': borderColor,
+            'legend.font.color': textColor,
+            'paper_bgcolor': bgColor,
+            'plot_bgcolor': bgColor
+        };
+        
+        try {
+            Plotly.relayout('comparison-chart', update);
+        } catch (error) {
+            console.warn('Failed to update chart colors:', error);
+        }
     }
 
     resetToDefaults() {
@@ -1190,5 +1151,20 @@ class InvestmentCalculator {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.calculator = new InvestmentCalculator();
+    // Wait for Plotly to be available
+    const initCalculator = () => {
+        if (typeof Plotly !== 'undefined') {
+            window.calculator = new InvestmentCalculator();
+            
+            // Add window resize handler for chart
+            window.addEventListener('resize', () => {
+                if (window.calculator && window.calculator.chart) {
+                    Plotly.Plots.resize('comparison-chart');
+                }
+            });
+        } else {
+            setTimeout(initCalculator, 100);
+        }
+    };
+    initCalculator();
 });
