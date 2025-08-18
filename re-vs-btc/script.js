@@ -1050,7 +1050,6 @@ class InvestmentCalculator {
                 mirror: true
             },
             yaxis: {
-                title: { text: 'Value ($)', font: { color: textColor }, standoff: 20 },
                 tickfont: { color: textColor },
                 tick0: 0,
                 gridcolor: borderColor,
@@ -1060,10 +1059,15 @@ class InvestmentCalculator {
             },
             paper_bgcolor: bgColor,
             plot_bgcolor: bgColor,
+            margin: { t: 95, b: 40, l: 55, r: 10 },
             legend: {
-                visible: false
-            },
-            margin: { t: 100, b: 60, l: 100, r: 30 }
+                font: { color: textColor },
+                orientation: 'h',
+                x: 0.5,
+                xanchor: 'center',
+                y: -0.15,
+                yanchor: 'top'
+            }
         };
 
         const config = {

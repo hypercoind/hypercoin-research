@@ -242,7 +242,7 @@ button:hover, .btn:hover {
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    height: 600px;
+    height: 1000px;
 }
 
 .chart-container:hover {
