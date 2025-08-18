@@ -237,12 +237,12 @@ button:hover, .btn:hover {
 .chart-container {
     position: relative;
     background: var(--card-bg);
-    padding: 2rem;
+    padding: 1rem;
     border-radius: 12px;
-    margin-bottom: 2rem;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
+    height: 600px;
 }
 
 .chart-container:hover {
