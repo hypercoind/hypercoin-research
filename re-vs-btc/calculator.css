@@ -404,7 +404,7 @@
 /* Re-vs-btc page specific header overrides */
 .container header {
     position: static;
-    padding: 3rem 0;
+    padding: 1rem 0 0 0;
     border-bottom: none;
     backdrop-filter: none;
 }
@@ -519,6 +519,10 @@
     .rent-inputs,
     .results-section {
         padding: 1rem;
+    }
+
+    .container header {
+        padding: 3.5rem 0 12.5rem 0;
     }
     
     .result-card {

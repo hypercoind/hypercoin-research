@@ -998,11 +998,13 @@ class InvestmentCalculator {
         const timeHorizon = parseInt(document.getElementById('time-horizon').value);
         const years = Array.from({length: timeHorizon + 1}, (_, i) => i);
 
-        // Get current theme colors
+        // Get current theme colors with proper light mode detection
         const computedStyle = getComputedStyle(document.body);
-        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || '#f0f6fc';
-        const borderColor = computedStyle.getPropertyValue('--border-color').trim() || '#30363d';
-        const bgColor = computedStyle.getPropertyValue('--background-primary').trim() || '#0d1117';
+        const isLight = document.body.getAttribute('data-theme') === 'light';
+        
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || (isLight ? '#1a1a1a' : '#f0f6fc');
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim() || (isLight ? '#e0e0e0' : '#30363d');
+        const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || (isLight ? '#f8f9fa' : '#161b22');
         
         const realEstateValues = this.calculateYearlyValues(realEstateResults, timeHorizon);
         const portfolioValues = this.calculatePortfolioYearlyValues(portfolioResults, timeHorizon);
@@ -1015,7 +1017,7 @@ class InvestmentCalculator {
                 type: 'scatter',
                 mode: 'lines',
                 name: 'Real Estate Net Worth',
-                line: { color: '#e74c3c', width: 3 }
+                line: { color: '#e74c3c', width: 2 }
             },
             {
                 x: years,
@@ -1023,7 +1025,7 @@ class InvestmentCalculator {
                 type: 'scatter',
                 mode: 'lines',
                 name: 'Investment Portfolio Value',
-                line: { color: '#3498db', width: 3 }
+                line: { color: '#3498db', width: 2 }
             },
             {
                 x: years,
@@ -1031,32 +1033,37 @@ class InvestmentCalculator {
                 type: 'scatter',
                 mode: 'lines',
                 name: 'Bitcoin Savings Strategy',
-                line: { color: '#f7931a', width: 3 }
+                line: { color: '#f7931a', width: 2 }
             }
         ];
 
         const layout = {
             title: {
-                text: 'Investment Growth Comparison Over Time',
+                text: 'Investment Comparison',
                 font: { color: textColor, size: 16 }
             },
             xaxis: {
                 title: { text: 'Years', font: { color: textColor } },
                 tickfont: { color: textColor },
-                gridcolor: borderColor
+                gridcolor: borderColor,
+                showline: true,
+                mirror: true
             },
             yaxis: {
-                title: { text: 'Value ($)', font: { color: textColor } },
+                title: { text: 'Value ($)', font: { color: textColor }, standoff: 20 },
                 tickfont: { color: textColor },
+                tick0: 0,
                 gridcolor: borderColor,
-                tickformat: '$,.0f'
+                tickformat: '$,.0f',
+                showline: true,
+                mirror: true
             },
             paper_bgcolor: bgColor,
             plot_bgcolor: bgColor,
             legend: {
-                font: { color: textColor }
+                visible: false
             },
-            margin: { t: 60, b: 60, l: 80, r: 60 }
+            margin: { t: 100, b: 60, l: 100, r: 30 }
         };
 
         const config = {
@@ -1067,6 +1074,14 @@ class InvestmentCalculator {
 
         return Plotly.newPlot('comparison-chart', traces, layout, config).then((plotDiv) => {
             this.chart = plotDiv;
+            
+            // Force resize after chart creation to ensure proper sizing
+            setTimeout(() => {
+                if (this.chart) {
+                    Plotly.Plots.resize('comparison-chart');
+                }
+            }, 100);
+            
             return plotDiv;
         }).catch((error) => {
             console.error('Failed to create chart:', error);
@@ -1078,11 +1093,13 @@ class InvestmentCalculator {
     updateChartColors() {
         if (!this.chart) return;
         
-        // Get current theme colors
+        // Get current theme colors with proper light mode detection
         const computedStyle = getComputedStyle(document.body);
-        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || '#f0f6fc';
-        const borderColor = computedStyle.getPropertyValue('--border-color').trim() || '#30363d';
-        const bgColor = computedStyle.getPropertyValue('--background-primary').trim() || '#0d1117';
+        const isLight = document.body.getAttribute('data-theme') === 'light';
+        
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || (isLight ? '#1a1a1a' : '#f0f6fc');
+        const borderColor = computedStyle.getPropertyValue('--border-color').trim() || (isLight ? '#e0e0e0' : '#30363d');
+        const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || (isLight ? '#f8f9fa' : '#161b22');
         
         const update = {
             'title.font.color': textColor,
@@ -1138,6 +1155,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const initCalculator = () => {
         if (typeof Plotly !== 'undefined') {
             window.calculator = new InvestmentCalculator();
+            
+            // Add window resize handler for chart
+            window.addEventListener('resize', () => {
+                if (window.calculator && window.calculator.chart) {
+                    Plotly.Plots.resize('comparison-chart');
+                }
+            });
         } else {
             setTimeout(initCalculator, 100);
         }

@@ -150,6 +150,10 @@
     height: 100%;
 }
 
+.simulator header {
+    padding: 1rem 0 0 0;
+}
+
 .simulator .loading-spinner {
     width: 80px;
     height: 80px;
@@ -287,7 +291,7 @@
     }
     
     .simulator header {
-        padding: 1.5rem 0;
+        padding: 4rem 0 8.5rem 0;
     }
     
     .controls {
