@@ -323,6 +323,41 @@
             observer.observe(card);
         });
 
+        // Sticky scroll behavior - snap to tools section on first scroll
+        let hasScrolledFromTop = false;
+        let scrollTimeout;
+        
+        function initStickyScroll() {
+            window.addEventListener('scroll', function() {
+                // Clear any existing timeout
+                clearTimeout(scrollTimeout);
+                
+                // If we haven't scrolled from top yet and we're scrolling down
+                if (!hasScrolledFromTop && window.scrollY > 50) {
+                    hasScrolledFromTop = true;
+                    
+                    // Small delay to ensure smooth transition
+                    scrollTimeout = setTimeout(() => {
+                        const toolsSection = document.getElementById('research');
+                        if (toolsSection) {
+                            toolsSection.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }, 150);
+                }
+                
+                // Reset flag if user scrolls back to top
+                if (window.scrollY <= 10) {
+                    hasScrolledFromTop = false;
+                }
+            });
+        }
+        
+        // Initialize sticky scroll behavior
+        initStickyScroll();
+
         // Enhanced welcome message
         console.log('🧡 Welcome to Hypercoin Research!');
         console.log('🌙 Professional Bitcoin-themed design with dynamic animations');
