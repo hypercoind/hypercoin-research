@@ -9,7 +9,6 @@
     --border-color: #30363d;
     --text-primary: #f0f6fc;
     --text-secondary: #8b949e;
-    --accent-blue: #58a6ff;
     --success-green: #238636;
     --gradient-start: #f7931a;
     --gradient-end: #ff6b35;
@@ -42,6 +41,7 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
+    min-height: 100dvh;
     transition: all 0.3s ease;
     scroll-snap-type: y mandatory;
     overflow-y: auto;
@@ -98,6 +98,7 @@ body {
 
 header {
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -328,17 +329,18 @@ input:focus, select:focus {
     
     header {
         height: 100vh;
+        height: 100dvh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 0;
     }
-    
+
     .site-header {
         padding: 1rem 0;
     }
-    
+
     .site-header-content {
         padding: 0 15px;
     }
@@ -451,16 +453,17 @@ input:focus, select:focus {
     .container {
         padding: 0.75rem 10px;
     }
-    
+
     header {
         height: 100vh;
+        height: 100dvh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 0;
     }
-    
+
     header h1 {
         font-size: 1.8rem;
     }
@@ -754,6 +757,7 @@ nav li {
     margin-top: 8rem;
     scroll-snap-align: start;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;

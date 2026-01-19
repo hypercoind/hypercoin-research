@@ -4,28 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Estate vs Portfolio Investment Comparison</title>
-    
+
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    
+
     <link rel="icon" type="image/jpeg" href="../images/bh_rjn.jpg">
     <link rel="apple-touch-icon" href="../images/bh_rjn.jpg">
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="calculator.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/calculator.css">
 </head>
 <body>
     <div class="site-header">
         <div class="site-header-content">
             <a href="../index.html" class="site-logo">hypercoin.info</a>
-            <button class="theme-toggle" id="theme-toggle">☀️ Light</button>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light theme">☀️ Light</button>
         </div>
     </div>
-    
+
     <div class="container">
         <header>
             <h1>Real Estate or BTC?</h1>
@@ -120,7 +125,7 @@
         </div>
 
         <div class="controls">
-            <button id="calculate-btn">Calculate & Compare</button>
+            <button id="calculate-btn" aria-label="Calculate and compare investments">Calculate & Compare</button>
             <button id="reset-btn" class="reset-btn">Reset to Defaults</button>
         </div>
 
@@ -153,9 +158,9 @@
                         <span class="label">Monthly Payment:</span>
                         <span class="value" id="re-monthly-payment">$0</span>
                     </div>
-                    
+
                     <button class="expand-details-btn" onclick="togglePaymentDetails()">View Payment Breakdown</button>
-                    
+
                     <div class="payment-details" id="payment-details" style="display: none;">
                         <div class="result-item">
                             <span class="label">Principal & Interest:</span>
@@ -178,7 +183,7 @@
                             <span class="value" id="re-hoa-fee">$0</span>
                         </div>
                     </div>
-                    
+
                     <div class="result-item">
                         <span class="label">Investment Volatility:</span>
                         <span class="value" id="re-volatility">0%</span>
@@ -257,191 +262,8 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/plotly.js@2.26.0/dist/plotly.min.js" 
-            crossorigin="anonymous" 
-            referrerpolicy="no-referrer"></script>
-    <script>
-        // Theme Management - Initialize on page load
-        const themeToggle = document.getElementById('theme-toggle');
-        const body = document.body;
-        
-        // Function to apply theme securely
-        function applyTheme(theme) {
-            // Check if mobile device (768px or less)
-            const isMobile = window.innerWidth <= 768;
-            
-            if (theme === 'light') {
-                body.setAttribute('data-theme', 'light');
-                themeToggle.textContent = isMobile ? '🌙' : '🌙 Dark';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = isMobile ? '☀️' : '☀️ Light';
-            }
-        }
-        
-        // Secure localStorage for theme validation
-        function getSecureTheme() {
-            try {
-                const theme = localStorage.getItem('theme');
-                if (theme && ['light', 'dark'].includes(theme)) {
-                    return theme;
-                }
-                if (theme) {
-                    console.warn('Invalid theme value, removing');
-                    localStorage.removeItem('theme');
-                }
-                return null;
-            } catch (error) {
-                console.error('localStorage access error:', error.message);
-                return null;
-            }
-        }
-
-        function setSecureTheme(theme) {
-            if (!['light', 'dark'].includes(theme)) {
-                console.warn('Invalid theme value:', theme);
-                return false;
-            }
-            try {
-                localStorage.setItem('theme', theme);
-                return true;
-            } catch (error) {
-                console.error('localStorage write error:', error.message);
-                return false;
-            }
-        }
-
-        // Check for saved theme preference or default to dark mode
-        const savedTheme = getSecureTheme();
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        } else {
-            applyTheme('dark');
-        }
-        
-        // Theme toggle functionality
-        themeToggle.addEventListener('click', function() {
-            const currentTheme = body.getAttribute('data-theme');
-            
-            if (currentTheme === 'light') {
-                applyTheme('dark');
-                setSecureTheme('dark');
-            } else {
-                applyTheme('light');
-                setSecureTheme('light');
-            }
-            
-            // Update chart colors if calculator is loaded and chart exists
-            if (window.calculator && window.calculator.chart) {
-                window.calculator.updateChartColors();
-            }
-            
-            // Trigger scroll event to update header colors
-            window.dispatchEvent(new Event('scroll'));
-        });
-        
-        // Update button text on window resize
-        window.addEventListener('resize', function() {
-            const currentTheme = body.getAttribute('data-theme') || 'dark';
-            applyTheme(currentTheme);
-        });
-        
-        // Mobile tap-to-scroll-to-top feature
-        function addMobileScrollToTop() {
-            const siteHeader = document.querySelector('.site-header');
-            if (!siteHeader) return;
-            
-            function handleHeaderTap(e) {
-                // Only on mobile devices (768px or less)
-                if (window.innerWidth <= 768) {
-                    // Don't trigger if tapping the theme toggle button
-                    if (e.target.closest('.theme-toggle')) return;
-                    
-                    // Scroll to top smoothly
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            }
-            
-            siteHeader.addEventListener('click', handleHeaderTap);
-            siteHeader.addEventListener('touchend', handleHeaderTap);
-        }
-        
-        // Initialize mobile scroll to top
-        addMobileScrollToTop();
-        
-        
-        // Handle theme from URL parameter (for carrying over from main page)
-        const urlParams = new URLSearchParams(window.location.search);
-        const themeParam = urlParams.get('theme');
-        if (themeParam && (themeParam === 'light' || themeParam === 'dark')) {
-            applyTheme(themeParam);
-            localStorage.setItem('theme', themeParam);
-            // Clean up URL by removing the theme parameter
-            const newUrl = window.location.href.split('?')[0];
-            window.history.replaceState({}, document.title, newUrl);
-        }
-        
-        // Toggle payment details function
-        function togglePaymentDetails() {
-            const details = document.getElementById('payment-details');
-            const button = document.querySelector('.expand-details-btn');
-            
-            if (details.style.display === 'none' || details.style.display === '') {
-                details.style.display = 'block';
-                button.textContent = 'Hide Payment Breakdown';
-            } else {
-                details.style.display = 'none';
-                button.textContent = 'View Payment Breakdown';
-            }
-        }
-        
-        // Make function globally accessible
-        window.togglePaymentDetails = togglePaymentDetails;
-
-        // Add scroll effect to site header (navigation bar)
-        window.addEventListener("scroll", () => {
-            const siteHeader = document.querySelector(".site-header");
-            const currentTheme = body.getAttribute('data-theme');
-            
-            if (window.scrollY > 100) {
-                if (currentTheme === 'light') {
-                    siteHeader.style.background = "rgba(255, 255, 255, 0.95)";
-                } else {
-                    siteHeader.style.background = "rgba(13, 17, 23, 0.95)";
-                }
-                siteHeader.style.backdropFilter = "blur(10px)";
-            } else {
-                siteHeader.style.background = "transparent";
-                siteHeader.style.backdropFilter = "blur(10px)";
-            }
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px",
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = "1";
-                    entry.target.style.transform = "translateY(0)";
-                }
-            });
-        }, observerOptions);
-
-        // Hide all content except h1 headers initially
-        document.querySelectorAll(".real-estate-inputs, .portfolio-inputs, .rent-inputs, .common-inputs, .help-section, .results-section, .controls, header p").forEach((element, index) => {
-            element.style.opacity = "0";
-            element.style.transform = "translateY(30px)";
-            element.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
-            observer.observe(element);
-        });
-    </script>
-    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js@2.26.0/dist/plotly.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../js/shared/theme.js"></script>
+    <script src="../js/calculator.js"></script>
 </body>
 </html>

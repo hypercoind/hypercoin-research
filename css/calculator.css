@@ -50,7 +50,7 @@
     transition: opacity 0.3s ease;
 }
 
-.controls::hover::before,
+.controls:hover::before,
 .real-estate-inputs:hover::before,
 .portfolio-inputs:hover::before,
 .rent-inputs:hover::before,

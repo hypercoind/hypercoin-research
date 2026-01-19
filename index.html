@@ -4,35 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hypercoin.info</title>
-    
+
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    
+
     <link rel="icon" type="image/jpeg" href="images/bh_rjn.jpg">
     <link rel="apple-touch-icon" href="images/bh_rjn.jpg">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- HTML - This is the structure and content of your page -->
-    
     <div class="site-header">
-        <div class="site-header-content">
+        <nav class="site-header-content" aria-label="Main navigation">
             <a href="#home" class="site-logo">hypercoin.info</a>
-            <button class="theme-toggle" id="theme-toggle">☀️ Light</button>
-        </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light theme">☀️ Light</button>
+        </nav>
     </div>
 
     <main>
@@ -62,7 +56,7 @@
 
             <section id="about" class="content-section">
                 <h2>About</h2>
-                <p>A collection of analytical tools for Bitcoin and investment decision-making. 
+                <p>A collection of analytical tools for Bitcoin and investment decision-making.
                     All calculations are transparent and based on historical data to help you explore different investment scenarios.</p>
                 <p><br>These tools are provided freely to help individuals make more informed investment decisions.</p>
             </section>
@@ -71,297 +65,13 @@
 
     <footer>
         <div class="container">
-            <p>Follow us <a href="https://twitter.com/hypercoind" target="_blank">@hypercoind</a> for updates.</p>
-            <p>See the code at <a href="https://github.com/hypercoind/hypercoin-research" target="_blank">GitHub</a></p>
+            <p>Follow us <a href="https://twitter.com/hypercoind" target="_blank" rel="noopener noreferrer">@hypercoind</a> for updates.</p>
+            <p>See the code at <a href="https://github.com/hypercoind/hypercoin-research" target="_blank" rel="noopener noreferrer">GitHub</a></p>
             <p>&copy; 2025 Hypercoin Research. Free Bitcoin analysis tools.</p>
         </div>
     </footer>
 
-    <!-- JavaScript - This makes the page interactive -->
-    <script>
-        // Secure localStorage utility
-        const SecureStorage = {
-            // Allowed keys and their validation functions
-            allowedKeys: {
-                'theme': (value) => ['light', 'dark'].includes(value)
-            },
-            
-            // Secure get with validation
-            get(key) {
-                if (!this.allowedKeys.hasOwnProperty(key)) {
-                    console.warn(`Attempt to access unauthorized storage key: ${key}`);
-                    return null;
-                }
-                
-                try {
-                    const value = localStorage.getItem(key);
-                    if (value === null) return null;
-                    
-                    // Validate the stored value
-                    if (!this.allowedKeys[key](value)) {
-                        console.warn(`Invalid stored value for key ${key}, removing`);
-                        this.remove(key);
-                        return null;
-                    }
-                    
-                    return value;
-                } catch (error) {
-                    console.error(`Error reading from localStorage: ${error.message}`);
-                    return null;
-                }
-            },
-            
-            // Secure set with validation
-            set(key, value) {
-                if (!this.allowedKeys.hasOwnProperty(key)) {
-                    console.warn(`Attempt to set unauthorized storage key: ${key}`);
-                    return false;
-                }
-                
-                if (!this.allowedKeys[key](value)) {
-                    console.warn(`Invalid value for key ${key}: ${value}`);
-                    return false;
-                }
-                
-                try {
-                    localStorage.setItem(key, value);
-                    return true;
-                } catch (error) {
-                    console.error(`Error writing to localStorage: ${error.message}`);
-                    return false;
-                }
-            },
-            
-            // Secure remove
-            remove(key) {
-                try {
-                    localStorage.removeItem(key);
-                    return true;
-                } catch (error) {
-                    console.error(`Error removing from localStorage: ${error.message}`);
-                    return false;
-                }
-            }
-        };
-
-        // Theme Management
-        const themeToggle = document.getElementById('theme-toggle');
-        const body = document.body;
-        
-        // Secure theme text setting function
-        function setThemeToggleText(theme) {
-            // Clear existing content safely
-            themeToggle.textContent = '';
-            
-            // Check if mobile device (768px or less)
-            const isMobile = window.innerWidth <= 768;
-            
-            // Create text node for safe content insertion
-            const textContent = isMobile ? 
-                (theme === 'light' ? '🌙' : '☀️') : 
-                (theme === 'light' ? '🌙 Dark' : '☀️ Light');
-            themeToggle.appendChild(document.createTextNode(textContent));
-        }
-
-        // Check for saved theme preference or default to dark mode
-        const savedTheme = SecureStorage.get('theme');
-        if (savedTheme === 'light') {
-            body.setAttribute('data-theme', 'light');
-            setThemeToggleText('light');
-        } else {
-            body.setAttribute('data-theme', 'dark');
-            setThemeToggleText('dark');
-        }
-        
-        // Theme toggle functionality
-        themeToggle.addEventListener('click', function() {
-            const currentTheme = body.getAttribute('data-theme');
-            
-            if (currentTheme === 'light') {
-                body.setAttribute('data-theme', 'dark');
-                setThemeToggleText('dark');
-                SecureStorage.set('theme', 'dark');
-            } else {
-                body.setAttribute('data-theme', 'light');
-                setThemeToggleText('light');
-                SecureStorage.set('theme', 'light');
-            }
-            
-            // Trigger scroll event to update header colors
-            window.dispatchEvent(new Event('scroll'));
-        });
-        
-        // Update button text on window resize
-        window.addEventListener('resize', function() {
-            const currentTheme = body.getAttribute('data-theme') || 'dark';
-            setThemeToggleText(currentTheme);
-        });
-        
-        // Mobile tap-to-scroll-to-top feature
-        function addMobileScrollToTop() {
-            const siteHeader = document.querySelector('.site-header');
-            if (!siteHeader) return;
-            
-            function handleHeaderTap(e) {
-                // Only on mobile devices (768px or less)
-                if (window.innerWidth <= 768) {
-                    // Don't trigger if tapping the theme toggle button
-                    if (e.target.closest('.theme-toggle')) return;
-                    
-                    // Scroll to top smoothly
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            }
-            
-            siteHeader.addEventListener('click', handleHeaderTap);
-            siteHeader.addEventListener('touchend', handleHeaderTap);
-        }
-        
-        // Initialize mobile scroll to top
-        addMobileScrollToTop();
-        
-        // Site logo scroll to top functionality (homepage only)
-        function addLogoScrollToTop() {
-            const siteLogo = document.querySelector('.site-logo');
-            if (!siteLogo) return;
-            
-            // Only add scroll behavior if we're on the homepage (href="#home")
-            if (siteLogo.getAttribute('href') === '#home') {
-                siteLogo.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Scroll to top smoothly
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                });
-            }
-        }
-        
-        // Initialize logo scroll to top
-        addLogoScrollToTop();
-        
-        // Smooth Navigation
-        const navLinks = document.querySelectorAll('nav a[href^="#"], .logo[href^="#"]');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                const targetSection = document.querySelector(targetId);
-                
-                if (targetId === '#home') {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                    return;
-                }
-                if (targetSection) {
-                    targetSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-        
-        // Handle theme passing to calculator page
-        const reBtcLink = document.getElementById('re-btc-link');
-        if (reBtcLink) {
-            reBtcLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                const currentTheme = body.getAttribute('data-theme') || 'dark';
-                const baseUrl = this.getAttribute('href');
-                const newUrl = `${baseUrl}?theme=${currentTheme}`;
-                window.location.href = newUrl;
-            });
-        }
-
-        // Add scroll effect to site header (navigation bar)
-        window.addEventListener("scroll", () => {
-            const siteHeader = document.querySelector(".site-header");
-            const currentTheme = body.getAttribute('data-theme');
-            
-            if (window.scrollY > 100) {
-                if (currentTheme === 'light') {
-                    siteHeader.style.background = "rgba(255, 255, 255, 0.95)";
-                } else {
-                    siteHeader.style.background = "rgba(13, 17, 23, 0.95)";
-                }
-                siteHeader.style.backdropFilter = "blur(10px)";
-            } else {
-                siteHeader.style.background = "transparent";
-                siteHeader.style.backdropFilter = "blur(10px)";
-            }
-        });
-
-        // Intersection Observer for animations (like hypercoin-development)
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px",
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = "1";
-                    entry.target.style.transform = "translateY(0)";
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll(".content-card").forEach((card) => {
-            card.style.opacity = "0";
-            card.style.transform = "translateY(30px)";
-            card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
-            observer.observe(card);
-        });
-
-        // Sticky scroll behavior - snap to tools section on first scroll
-        let hasScrolledFromTop = false;
-        let scrollTimeout;
-        
-        function initStickyScroll() {
-            window.addEventListener('scroll', function() {
-                // Clear any existing timeout
-                clearTimeout(scrollTimeout);
-                
-                // If we haven't scrolled from top yet and we're scrolling down
-                if (!hasScrolledFromTop && window.scrollY > 50) {
-                    hasScrolledFromTop = true;
-                    
-                    // Small delay to ensure smooth transition
-                    scrollTimeout = setTimeout(() => {
-                        const toolsSection = document.getElementById('research');
-                        if (toolsSection) {
-                            toolsSection.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-                        }
-                    }, 150);
-                }
-                
-                // Reset flag if user scrolls back to top
-                if (window.scrollY <= 10) {
-                    hasScrolledFromTop = false;
-                }
-            });
-        }
-        
-        // Initialize sticky scroll behavior
-        initStickyScroll();
-
-        // Enhanced welcome message
-        console.log('🧡 Welcome to Hypercoin Research!');
-        console.log('🌙 Professional Bitcoin-themed design with dynamic animations');
-        console.log('₿ Now featuring the same modern styling as hypercoin.dev');
-    </script>
+    <script src="js/shared/theme.js"></script>
+    <script src="js/landing.js"></script>
 </body>
 </html>

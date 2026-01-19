@@ -162,7 +162,7 @@ class InvestmentCalculator {
     calculateRealEstateInvestment() {
         // Validate all inputs before calculation
         const propertyPrice = this.validateAndClampInput('property-price', 50000, 50000000, 435000);
-        const downPayment = this.validateAndClampInput('down-payment', 1000, 10000000, 87000);
+        let downPayment = this.validateAndClampInput('down-payment', 1000, 10000000, 87000);
         const interestRate = this.validateAndClampInput('interest-rate', 0.1, 30, 6.7) / 100;
         const rentalYield = this.validateAndClampInput('rental-yield', 0, 20, 0) / 100;
         const appreciation = this.validateAndClampInput('property-appreciation', -10, 20, 4) / 100;
@@ -170,11 +170,12 @@ class InvestmentCalculator {
         const monthlyHOAFee = this.validateAndClampInput('hoa-fee', 0, 5000, 0);
         const timeHorizon = this.validateAndClampInput('time-horizon', 1, 50, 10);
 
-        // Additional validation
+        // Additional validation - fix value and continue (no recursion)
         if (downPayment > propertyPrice) {
-            document.getElementById('down-payment').value = propertyPrice * 0.2; // Set to 20%
+            const correctedDownPayment = propertyPrice * 0.2; // Set to 20%
+            document.getElementById('down-payment').value = correctedDownPayment;
             this.showValidationMessage(document.getElementById('down-payment'), 'Down payment cannot exceed property price');
-            return this.calculateRealEstateInvestment(); // Recalculate with corrected values
+            downPayment = correctedDownPayment; // Update local variable and continue
         }
 
         const downPaymentPercent = (downPayment / propertyPrice) * 100;
@@ -1154,12 +1155,59 @@ class InvestmentCalculator {
     }
 }
 
+// Toggle payment details function
+function togglePaymentDetails() {
+    const details = document.getElementById('payment-details');
+    const button = document.querySelector('.expand-details-btn');
+
+    if (details.style.display === 'none' || details.style.display === '') {
+        details.style.display = 'block';
+        button.textContent = 'Hide Payment Breakdown';
+    } else {
+        details.style.display = 'none';
+        button.textContent = 'View Payment Breakdown';
+    }
+}
+
+// Make function globally accessible
+window.togglePaymentDetails = togglePaymentDetails;
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize theme using shared utilities
+    ThemeUtils.initializeTheme();
+
+    // Handle theme from URL parameter (for carrying over from main page)
+    const urlParams = new URLSearchParams(window.location.search);
+    const themeParam = urlParams.get('theme');
+    if (themeParam && (themeParam === 'light' || themeParam === 'dark')) {
+        ThemeUtils.applyTheme(themeParam);
+        ThemeUtils.SecureStorage.set('theme', themeParam);
+        // Clean up URL by removing the theme parameter
+        const newUrl = window.location.href.split('?')[0];
+        window.history.replaceState({}, document.title, newUrl);
+    }
+
+    // Set up theme toggle with chart color update callback
+    ThemeUtils.setupThemeToggle(function(newTheme) {
+        if (window.calculator && window.calculator.chart) {
+            window.calculator.updateChartColors();
+        }
+    });
+
+    // Initialize mobile scroll to top
+    ThemeUtils.addMobileScrollToTop();
+
+    // Set up header scroll effect
+    ThemeUtils.setupHeaderScrollEffect();
+
+    // Intersection Observer for animations
+    ThemeUtils.setupIntersectionAnimations(".real-estate-inputs, .portfolio-inputs, .rent-inputs, .common-inputs, .help-section, .results-section, .controls, header p");
+
     // Wait for Plotly to be available
     const initCalculator = () => {
         if (typeof Plotly !== 'undefined') {
             window.calculator = new InvestmentCalculator();
-            
+
             // Add window resize handler for chart
             window.addEventListener('resize', () => {
                 if (window.calculator && window.calculator.chart) {
